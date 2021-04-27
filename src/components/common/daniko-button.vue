@@ -3,7 +3,7 @@
     <button
       @click="$emit('click')"
       class="button"
-      :class="{ 'button-border': type == 'border' }"
+      :class="{ 'button-border': type == 'border', 'button-block': isBlock }"
     >
       <slot></slot>
     </button>
@@ -15,6 +15,10 @@ export default {
   props: {
     type: {
       type: String,
+    },
+    isBlock: {
+      type: Boolean,
+      default: false,
     },
   },
 };
@@ -43,6 +47,10 @@ export default {
   &-border {
     color: $primary;
     background-color: transparent;
+  }
+
+  &-block {
+    width: 100%;
   }
 }
 </style>

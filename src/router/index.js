@@ -4,6 +4,7 @@ import headerLayout from "@/components/layouts/daniko-sidebar-layout.vue";
 import workers from "@/views/daniko-workers.vue";
 import services from "@/views/daniko-services.vue";
 import contacts from "@/views/daniko-contacts.vue";
+import login from "@/views/daniko-login.vue";
 
 Vue.use(VueRouter);
 
@@ -28,6 +29,11 @@ const routes = [
         component: contacts,
       },
     ],
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: login,
   },
 ];
 
