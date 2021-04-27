@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import headerLayout from "@/components/layouts/daniko-sidebar-layout.vue";
 import workers from "@/views/daniko-workers.vue";
 import services from "@/views/daniko-services.vue";
+import contacts from "@/views/daniko-contacts.vue";
 
 Vue.use(VueRouter);
 
@@ -20,6 +21,11 @@ const routes = [
         path: "/services",
         name: "services",
         component: services,
+      },
+      {
+        path: "/contacts",
+        name: "contacts",
+        component: contacts,
       },
     ],
   },
