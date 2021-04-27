@@ -24,6 +24,12 @@
           placeholder="Введите специальность специалиста"
           v-model="newWorker.job"
         />
+        <daniko-textarea
+          class="right-block-input"
+          title="Описание"
+          placeholder="Добавьте описание специалиста"
+          v-model="newWorker.description"
+        />
         <daniko-button class="right-block-button"
           >Добавить специалиста</daniko-button
         >
@@ -53,6 +59,7 @@ import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
+import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
 
@@ -62,6 +69,7 @@ export default {
     "daniko-worker-card": danikoWorkerCard,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
+    "daniko-textarea": danikoTextarea,
   },
 
   data() {

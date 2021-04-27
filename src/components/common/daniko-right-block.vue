@@ -34,6 +34,7 @@ export default {
   top: 0;
   right: -500px;
   padding: 60px 40px;
+  padding-bottom: 0;
   width: 500px;
   height: 100vh;
   box-sizing: border-box;
@@ -65,6 +66,12 @@ export default {
     color: $main-dark;
     font-size: 28px;
     font-weight: bold;
+  }
+
+  &-content {
+    padding-bottom: 30px;
+    box-sizing: border-box;
+    overflow: auto;
   }
 }
 </style>
