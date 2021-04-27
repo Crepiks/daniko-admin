@@ -61,7 +61,7 @@ export default {
   }
 
   &-title {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     color: $main-dark;
     font-size: 28px;
     font-weight: bold;
