@@ -1,7 +1,9 @@
 <template>
   <div class="page">
     <daniko-sidebar class="page-sidebar" />
-    <div class="page-content"></div>
+    <div class="page-content">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -28,9 +30,11 @@ export default {
   }
 
   &-content {
+    padding: 50px;
     margin-left: 300px;
     width: calc(100vw - 300px);
     min-height: 100vh;
+    box-sizing: border-box;
   }
 }
 </style>
