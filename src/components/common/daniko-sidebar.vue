@@ -28,7 +28,7 @@
         <i class="bx bxs-user-circle sidebar-link-icon"></i>
         <span class="sidebar-link-label">Профиль</span>
       </div>
-      <div class="sidebar-link sidebar-link-danger">
+      <div @click="logout" class="sidebar-link sidebar-link-danger">
         <i class="bx bx-log-out sidebar-link-icon"></i>
         <span class="sidebar-link-label">Выход</span>
       </div>
@@ -37,7 +37,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    logout() {
+      this.$router.push("/login");
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -109,6 +115,20 @@ export default {};
         color: #e74c3c;
       }
     }
+  }
+}
+</style>
+
+<style lang="scss">
+@import "@/assets/styles/variables.scss";
+
+.router-link-active {
+  & > .sidebar-link-icon {
+    color: $primary;
+  }
+
+  & > .sidebar-link-label {
+    color: $primary;
   }
 }
 </style>
