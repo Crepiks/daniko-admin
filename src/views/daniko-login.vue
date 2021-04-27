@@ -1,7 +1,14 @@
 <template>
   <div class="login-page">
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <img src="@/assets/images/logo.svg" alt="Daniko" class="login-logo" />
-    <form class="login-form">
+    <form @submit.prevent="handleLogin" class="login-form">
       <h2 class="login-title">Вход в админ панель</h2>
       <daniko-input
         class="login-input"
@@ -25,18 +32,46 @@
 <script>
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoButton from "@/components/common/daniko-button.vue";
+import danikoNotification from "@/components/common/daniko-notification.vue";
 
 export default {
   components: {
     "daniko-input": danikoInput,
     "daniko-button": danikoButton,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
     return {
       email: "",
       password: "",
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
     };
+  },
+
+  methods: {
+    handleLogin() {
+      if (this.email.trim() && this.password.trim()) {
+        if (
+          this.email.trim() == "azatuk2005@mail.ru" &&
+          this.password.trim() == "Azat12345"
+        ) {
+          this.$router.push("/workers");
+        } else {
+          this.notificationHeading = "Неверные данные";
+          this.notificationText =
+            "Неверный логин или пароль, попробуйте заново";
+          this.isNotificationOpen = true;
+        }
+      } else {
+        this.notificationHeading = "Заполните все поля";
+        this.notificationText = "Для входа введите почту и пароль";
+        this.isNotificationOpen = true;
+      }
+    },
   },
 };
 </script>
