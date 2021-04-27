@@ -1,8 +1,15 @@
 <template>
   <div class="workers-page">
+    <daniko-right-block
+      :isOpen="isRightBlockOpen"
+      title="Новый специалист"
+      @close-right-block="isRightBlockOpen = false"
+    ></daniko-right-block>
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
-      <daniko-button>Добавить специалиста</daniko-button>
+      <daniko-button @click="isRightBlockOpen = true"
+        >Добавить специалиста</daniko-button
+      >
     </header>
     <div class="workers-grid">
       <daniko-worker-card
@@ -20,6 +27,7 @@
 <script>
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
+import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
 
@@ -27,6 +35,7 @@ export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-worker-card": danikoWorkerCard,
+    "daniko-right-block": danikoRightBlock,
   },
 
   data() {
@@ -48,6 +57,7 @@ export default {
         },
         providedServices: [{ id: 0, name: "" }],
       },
+      isRightBlockOpen: false,
     };
   },
 
