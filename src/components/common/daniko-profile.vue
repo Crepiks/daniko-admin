@@ -1,5 +1,12 @@
 <template>
   <div class="profile">
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <daniko-right-block
       :isOpen="isOpen"
       title="Редактирование профиля"
@@ -20,7 +27,9 @@
           placeholder="Введите новую электронную почту"
           v-model="newEmail"
         />
-        <daniko-button class="right-block-button">Сменить почту</daniko-button>
+        <daniko-button class="right-block-button" @click="handleChangingEmail"
+          >Сменить почту</daniko-button
+        >
         <daniko-input
           class="right-block-input"
           title="Текущий пароль"
@@ -35,7 +44,11 @@
           placeholder="Введите новый пароль"
           v-model="newPassword"
         />
-        <daniko-button class="right-block-button">Сменить пароль</daniko-button>
+        <daniko-button
+          class="right-block-button"
+          @click="handleChangingPassword"
+          >Сменить пароль</daniko-button
+        >
       </div>
     </daniko-right-block>
   </div>
@@ -45,6 +58,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
+import danikoNotification from "@/components/common/daniko-notification.vue";
 
 export default {
   props: {
@@ -58,6 +72,7 @@ export default {
     "daniko-button": danikoButton,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
@@ -66,7 +81,43 @@ export default {
       newEmail: "",
       password: "",
       newPassword: "",
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
     };
+  },
+
+  methods: {
+    handleChangingEmail() {
+      if (this.email.trim() && this.newEmail.trim()) {
+        this.$emit("close-profile");
+        this.notificationHeading = "Почта обновлена";
+        this.notificationText =
+          "Используйте новую почту для входа в админ панель";
+        this.notificationStatus = "success";
+        this.isNotificationOpen = true;
+      } else {
+        this.notificationHeading = "Заполните все поля";
+        this.notificationText =
+          "Заполните поля текущей и новой электронной почты";
+        this.isNotificationOpen = true;
+      }
+    },
+
+    handleChangingPassword() {
+      if (this.password.trim() && this.newPassword.trim()) {
+        this.$emit("close-profile");
+        this.notificationHeading = "Пароль обновлен";
+        this.notificationText =
+          "Используйте новый пароль для входа в админ панель";
+        this.isNotificationOpen = true;
+      } else {
+        this.notificationHeading = "Заполните все поля";
+        this.notificationText = "Заполните поля текущего и нового пароля";
+        this.isNotificationOpen = true;
+      }
+    },
   },
 };
 </script>

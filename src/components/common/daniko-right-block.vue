@@ -33,8 +33,7 @@ export default {
   position: fixed;
   top: 0;
   right: -500px;
-  padding: 60px 40px;
-  padding-bottom: 0;
+  padding: 60px 25px 0 40px;
   width: 500px;
   height: 100vh;
   box-sizing: border-box;
@@ -42,6 +41,7 @@ export default {
   flex-direction: column;
   background-color: $white;
   transition: 400ms ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
   z-index: 3;
 
   &-active {
@@ -70,6 +70,7 @@ export default {
 
   &-content {
     padding-bottom: 30px;
+    padding-right: 15px;
     box-sizing: border-box;
     overflow: auto;
   }
