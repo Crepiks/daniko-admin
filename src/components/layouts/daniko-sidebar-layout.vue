@@ -1,18 +1,30 @@
 <template>
   <div class="page">
-    <daniko-sidebar class="page-sidebar" />
+    <daniko-sidebar @open-profile="isProfileOpen = true" class="page-sidebar" />
     <div class="page-content">
       <router-view />
+      <daniko-profile
+        :isOpen="isProfileOpen"
+        @close-profile="isProfileOpen = false"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import danikoSidebar from "@/components/common/daniko-sidebar.vue";
+import danikoProfile from "../common/daniko-profile.vue";
 
 export default {
   components: {
     "daniko-sidebar": danikoSidebar,
+    "daniko-profile": danikoProfile,
+  },
+
+  data() {
+    return {
+      isProfileOpen: false,
+    };
   },
 };
 </script>

@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="sidebar-links">
-      <div class="sidebar-link">
+      <div class="sidebar-link" @click="$emit('open-profile')">
         <i class="bx bxs-user-circle sidebar-link-icon"></i>
         <span class="sidebar-link-label">Профиль</span>
       </div>
