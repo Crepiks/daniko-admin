@@ -1,44 +1,12 @@
 <template>
   <div class="workers-page">
-    <daniko-right-block
-      :isOpen="isRightBlockOpen"
-      title="Новый специалист"
-      @close-right-block="isRightBlockOpen = false"
-    >
-      <div class="right-block-component">
-        <daniko-input
-          class="right-block-input"
-          title="Имя"
-          placeholder="Введите имя специалиста"
-          v-model="newWorker.firstName"
-        />
-        <daniko-input
-          class="right-block-input"
-          title="Фамилия"
-          placeholder="Введите фамилию специалиста"
-          v-model="newWorker.lastName"
-        />
-        <daniko-input
-          class="right-block-input"
-          title="Специальность"
-          placeholder="Введите специальность специалиста"
-          v-model="newWorker.job"
-        />
-        <daniko-textarea
-          class="right-block-input"
-          title="Описание"
-          placeholder="Добавьте описание специалиста"
-          v-model="newWorker.description"
-        />
-        <daniko-add-schedule class="right-block-schedule" />
-        <daniko-button class="right-block-button"
-          >Добавить специалиста</daniko-button
-        >
-      </div>
-    </daniko-right-block>
+    <daniko-add-worker
+      :isAddWorkerBlockOpen="isAddWorkerBlockOpen"
+      @close="isAddWorkerBlockOpen = false"
+    />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
-      <daniko-button @click="isRightBlockOpen = true"
+      <daniko-button @click="isAddWorkerBlockOpen = true"
         >Добавить специалиста</daniko-button
       >
     </header>
@@ -58,10 +26,7 @@
 <script>
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
-import danikoRightBlock from "@/components/common/daniko-right-block.vue";
-import danikoInput from "@/components/common/daniko-input.vue";
-import danikoTextarea from "@/components/common/daniko-textarea.vue";
-import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
+import danikoAddWorker from "@/components/workers/daniko-add-worker.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
 
@@ -69,10 +34,7 @@ export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-worker-card": danikoWorkerCard,
-    "daniko-right-block": danikoRightBlock,
-    "daniko-input": danikoInput,
-    "daniko-textarea": danikoTextarea,
-    "daniko-add-schedule": danikoAddSchedule,
+    "daniko-add-worker": danikoAddWorker,
   },
 
   data() {
@@ -94,24 +56,7 @@ export default {
         },
         providedServices: [{ id: 0, name: "" }],
       },
-      newWorker: {
-        firstName: "",
-        lastName: "",
-        job: "",
-        imagePath: "",
-        description: "",
-        schedule: {
-          monday: "",
-          tuesday: "",
-          wednesday: "",
-          thursday: "",
-          friday: "",
-          saturday: "",
-          sunday: "",
-        },
-        providedServices: [{ id: 0, name: "" }],
-      },
-      isRightBlockOpen: false,
+      isAddWorkerBlockOpen: false,
     };
   },
 
@@ -160,26 +105,6 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     column-gap: 20px;
     row-gap: 40px;
-  }
-}
-
-.right-block {
-  &-component {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &-input {
-    margin-bottom: 25px;
-  }
-
-  &-button {
-    margin-top: 10px;
-  }
-
-  &-schedule {
-    margin: 25px 0;
   }
 }
 </style>

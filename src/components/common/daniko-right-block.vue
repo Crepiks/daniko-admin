@@ -62,14 +62,15 @@ export default {
   }
 
   &-title {
-    margin-bottom: 30px;
+    padding-bottom: 30px;
     color: $main-dark;
     font-size: 28px;
     font-weight: bold;
+    border-bottom: 2px solid #b2bec330;
   }
 
   &-content {
-    padding-bottom: 30px;
+    padding: 20px 0;
     padding-right: 15px;
     box-sizing: border-box;
     overflow: auto;
