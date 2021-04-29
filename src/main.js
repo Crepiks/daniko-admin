@@ -16,6 +16,9 @@ const settings = {
 
 Vue.use(YmapPlugin, settings);
 
+import VueMask from "v-mask";
+Vue.use(VueMask);
+
 new Vue({
   router,
   store,

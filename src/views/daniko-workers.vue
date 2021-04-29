@@ -30,6 +30,7 @@
           placeholder="Добавьте описание специалиста"
           v-model="newWorker.description"
         />
+        <daniko-add-schedule class="right-block-schedule" />
         <daniko-button class="right-block-button"
           >Добавить специалиста</daniko-button
         >
@@ -60,6 +61,7 @@ import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
+import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
 
@@ -70,6 +72,7 @@ export default {
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
     "daniko-textarea": danikoTextarea,
+    "daniko-add-schedule": danikoAddSchedule,
   },
 
   data() {
@@ -173,6 +176,10 @@ export default {
 
   &-button {
     margin-top: 10px;
+  }
+
+  &-schedule {
+    margin: 25px 0;
   }
 }
 </style>
