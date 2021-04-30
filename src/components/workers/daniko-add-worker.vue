@@ -30,6 +30,11 @@
         v-model="newWorker.description"
       />
       <daniko-add-schedule class="right-block-schedule" />
+      <daniko-choose-provided
+        title="Предоставляемые услуги"
+        :cards="services"
+        class="right-block-provided"
+      />
       <daniko-button class="right-block-button"
         >Добавить специалиста</daniko-button
       >
@@ -43,12 +48,16 @@ import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
+import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
 
 export default {
   props: {
     isAddWorkerBlockOpen: {
       type: Boolean,
       default: false,
+    },
+    services: {
+      type: Array,
     },
   },
 
@@ -58,6 +67,7 @@ export default {
     "daniko-input": danikoInput,
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
+    "daniko-choose-provided": danikoChooseProvided,
   },
 
   data() {
@@ -103,6 +113,10 @@ export default {
   }
 
   &-schedule {
+    margin: 25px 0;
+  }
+
+  &-provided {
     margin: 25px 0;
   }
 }

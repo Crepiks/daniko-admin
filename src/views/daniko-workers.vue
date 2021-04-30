@@ -2,6 +2,7 @@
   <div class="workers-page">
     <daniko-add-worker
       :isAddWorkerBlockOpen="isAddWorkerBlockOpen"
+      :services="services"
       @close="isAddWorkerBlockOpen = false"
     />
     <header class="workers-header">
@@ -29,6 +30,7 @@ import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
 import danikoAddWorker from "@/components/workers/daniko-add-worker.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
+import services from "@/data/services.js";
 
 export default {
   components: {
@@ -40,6 +42,7 @@ export default {
   data() {
     return {
       workers: workers,
+      services: services,
       activeWorker: {
         name: "",
         job: "",
