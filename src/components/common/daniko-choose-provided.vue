@@ -53,6 +53,7 @@ export default {
           }
         });
       }
+      this.$emit("edit-provided", this.activeCards);
     },
 
     isCardActive(cardId) {

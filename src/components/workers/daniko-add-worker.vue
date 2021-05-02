@@ -41,9 +41,10 @@
         @edit-schedule="handleScheduleEdit"
       />
       <daniko-choose-provided
+        class="right-block-provided"
         title="Предоставляемые услуги"
         :cards="services"
-        class="right-block-provided"
+        @edit-provided="handleEditProvided"
       />
       <daniko-button class="right-block-button" @click="handleAddButton"
         >Добавить специалиста</daniko-button
@@ -129,8 +130,71 @@ export default {
       });
     },
 
+    handleEditProvided(editedProvided) {
+      this.newWorker.providedServices = editedProvided;
+    },
+
     handleAddButton() {
-      console.log(this.newWorker);
+      // сначала проходит валидация на обязательные поля, потом на формат времени приёма
+      this.isNotificationOpen = false;
+      if (
+        this.newWorker.firstName.trim() &&
+        this.newWorker.lastName.trim() &&
+        this.newWorker.job.trim()
+      ) {
+        let isScheduleTimeFormatCorrect = true;
+        this.scheduleDays.forEach((day) => {
+          if (this.newWorker.schedule[day]) {
+            if (
+              Number(this.newWorker.schedule[day].substring(0, 2)) > 23 ||
+              Number(this.newWorker.schedule[day].substring(3, 5)) > 59 ||
+              Number(this.newWorker.schedule[day].substring(6, 8)) > 23 ||
+              Number(this.newWorker.schedule[day].substring(9, 11)) > 59
+            ) {
+              isScheduleTimeFormatCorrect = false;
+            }
+          }
+        });
+
+        if (isScheduleTimeFormatCorrect) {
+          let isScheduleTimeCorrect = true;
+          this.scheduleDays.forEach((day) => {
+            if (this.newWorker.schedule[day]) {
+              if (
+                Number(this.newWorker.schedule[day].substring(0, 2)) >
+                  Number(this.newWorker.schedule[day].substring(6, 8)) ||
+                (Number(this.newWorker.schedule[day].substring(0, 2)) ==
+                  Number(this.newWorker.schedule[day].substring(6, 8)) &&
+                  Number(this.newWorker.schedule[day].substring(3, 5)) >=
+                    Number(this.newWorker.schedule[day].substring(9, 11)))
+              ) {
+                isScheduleTimeCorrect = false;
+              }
+            }
+          });
+
+          if (isScheduleTimeCorrect) {
+            // write request here
+            console.log("ok");
+          } else {
+            this.notificationHeading = "Неверно выставлено время приёма";
+            this.notificationText =
+              "Время окончания приёма не может быть раньше или равно времени начала приёма";
+            this.isNotificationOpen = true;
+          }
+        } else {
+          // проверку валидации пришлось делать через отдельную переменну. isScheduleTimeFormatCorrect, потому что иначе notification мог разом вызваться много раз
+          this.notificationHeading = "Неверный формат времени приёма";
+          this.notificationText =
+            "В поля времени приёма специалиста вводите от 00 до 24 для часов и от 00 до 59 для минут ";
+          this.isNotificationOpen = true;
+        }
+      } else {
+        this.notificationHeading = "Заполните обязательные поля";
+        this.notificationText =
+          "Для добавления специалиста вы должны указать: имя, фамилию и специальность";
+        this.isNotificationOpen = true;
+      }
     },
   },
 };

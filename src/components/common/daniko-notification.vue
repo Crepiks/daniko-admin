@@ -172,7 +172,8 @@ export default {
 
   &-paragraph {
     color: $main-dark;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 130%;
     opacity: 0.8;
   }
 
