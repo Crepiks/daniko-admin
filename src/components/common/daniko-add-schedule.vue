@@ -13,7 +13,9 @@
         class="schedule-day"
         v-for="(day, index) in days"
         :key="index"
-        :day="day"
+        :day="day.rus"
+        @change-from-time="handleChangeFromTime($event, day)"
+        @change-to-time="handleChangeToTime($event, day)"
       />
     </div>
   </div>
@@ -30,16 +32,78 @@ export default {
   data() {
     return {
       days: [
-        "Понедельник",
-        "Вторник",
-        "Среда",
-        "Четверг",
-        "Пятница",
-        "Суббота",
-        "Воскресенье",
+        {
+          rus: "Понедельник",
+          eng: "monday",
+        },
+        {
+          rus: "Вторник",
+          eng: "tuesday",
+        },
+        {
+          rus: "Среда",
+          eng: "wednesday",
+        },
+        {
+          rus: "Четверг",
+          eng: "thursday",
+        },
+        {
+          rus: "Пятница",
+          eng: "friday",
+        },
+        {
+          rus: "Суббота",
+          eng: "saturday",
+        },
+        {
+          rus: "Воскресенье",
+          eng: "sunday",
+        },
       ],
+      schedule: {
+        monday: {
+          from: "",
+          to: "",
+        },
+        tuesday: {
+          from: "",
+          to: "",
+        },
+        wednesday: {
+          from: "",
+          to: "",
+        },
+        thursday: {
+          from: "",
+          to: "",
+        },
+        friday: {
+          from: "",
+          to: "",
+        },
+        saturday: {
+          from: "",
+          to: "",
+        },
+        sunday: {
+          from: "",
+          to: "",
+        },
+      },
       showSchedule: true,
     };
+  },
+
+  methods: {
+    handleChangeFromTime(fromTime, day) {
+      this.schedule[day.eng].from = fromTime;
+      this.$emit("edit-schedule", this.schedule);
+    },
+    handleChangeToTime(toTime, day) {
+      this.schedule[day.eng].to = toTime;
+      this.$emit("edit-schedule", this.schedule);
+    },
   },
 };
 </script>

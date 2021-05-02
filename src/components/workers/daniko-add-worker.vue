@@ -4,6 +4,13 @@
     title="Новый специалист"
     @close-right-block="$emit('close')"
   >
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <div class="right-block-component">
       <daniko-input
         class="right-block-input"
@@ -29,13 +36,16 @@
         placeholder="Добавьте описание специалиста"
         v-model="newWorker.description"
       />
-      <daniko-add-schedule class="right-block-schedule" />
+      <daniko-add-schedule
+        class="right-block-schedule"
+        @edit-schedule="handleScheduleEdit"
+      />
       <daniko-choose-provided
         title="Предоставляемые услуги"
         :cards="services"
         class="right-block-provided"
       />
-      <daniko-button class="right-block-button"
+      <daniko-button class="right-block-button" @click="handleAddButton"
         >Добавить специалиста</daniko-button
       >
     </div>
@@ -49,6 +59,7 @@ import danikoInput from "@/components/common/daniko-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
 import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
+import danikoNotification from "@/components/common/daniko-notification.vue";
 
 export default {
   props: {
@@ -68,10 +79,15 @@ export default {
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
     "daniko-choose-provided": danikoChooseProvided,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
     return {
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
       newWorker: {
         firstName: "",
         lastName: "",
@@ -89,7 +105,33 @@ export default {
         },
         providedServices: [{ id: 0, name: "" }],
       },
+      scheduleDays: [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+      ],
     };
+  },
+
+  methods: {
+    handleScheduleEdit(editedSchedule) {
+      this.scheduleDays.forEach((day) => {
+        if (editedSchedule[day].from) {
+          this.newWorker.schedule[day] =
+            String(editedSchedule[day].from) +
+            ":" +
+            String(editedSchedule[day].to);
+        }
+      });
+    },
+
+    handleAddButton() {
+      console.log(this.newWorker);
+    },
   },
 };
 </script>

@@ -43,6 +43,15 @@ export default {
     };
   },
 
+  watch: {
+    fromTime() {
+      this.$emit("change-from-time", this.fromTime);
+    },
+    toTime() {
+      this.$emit("change-to-time", this.toTime);
+    },
+  },
+
   mounted() {
     if (this.from) this.fromTime = this.time;
     if (this.to) this.toTime = this.to;

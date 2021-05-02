@@ -2,7 +2,7 @@ import testWorkerImage from "@/assets/images/test-worker-image.png";
 
 export default {
   imagePath: testWorkerImage,
-  name: "Азат Кажимухан",
+  name: "Онласын Саяжан",
   job: "Педиатр",
   description:
     "Более 10 лет стажа, магистратура за границей и сотни успешных операций. Буду рад вас дечить!",
