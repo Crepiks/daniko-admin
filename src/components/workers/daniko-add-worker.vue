@@ -48,7 +48,10 @@
         :cards="services"
         @edit-provided="handleEditProvided"
       />
-      <daniko-button class="right-block-button" @click="handleAddButton"
+      <daniko-button
+        class="right-block-button"
+        :isLoading="isLoading"
+        @click="handleAddButton"
         >Добавить специалиста</daniko-button
       >
     </div>
@@ -91,6 +94,7 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
+      isLoading: false,
       newWorker: {
         firstName: "",
         lastName: "",
@@ -138,6 +142,7 @@ export default {
 
     handleAddButton() {
       // сначала проходит валидация на обязательные поля, потом на формат времени приёма
+      this.isLoading = true;
       this.isNotificationOpen = false;
       if (
         this.newWorker.firstName.trim() &&
@@ -179,6 +184,7 @@ export default {
             // write request here
             console.log("ok");
           } else {
+            this.isLoading = false;
             this.notificationHeading = "Неверно выставлено время приёма";
             this.notificationText =
               "Время окончания приёма не может быть раньше или равно времени начала приёма";
@@ -186,12 +192,14 @@ export default {
           }
         } else {
           // проверку валидации пришлось делать через отдельную переменну. isScheduleTimeFormatCorrect, потому что иначе notification мог разом вызваться много раз
+          this.isLoading = false;
           this.notificationHeading = "Неверный формат времени приёма";
           this.notificationText =
             "В поля времени приёма специалиста вводите от 00 до 24 для часов и от 00 до 59 для минут ";
           this.isNotificationOpen = true;
         }
       } else {
+        this.isLoading = false;
         this.notificationHeading = "Заполните обязательные поля";
         this.notificationText =
           "Для добавления специалиста вы должны указать: имя, фамилию и специальность";

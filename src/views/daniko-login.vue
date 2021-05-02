@@ -24,7 +24,9 @@
         placeholder="Введите пароль"
         v-model="password"
       />
-      <daniko-button class="login-button" :isBlock="true">Войти</daniko-button>
+      <daniko-button class="login-button" :isLoading="isLoading" :isBlock="true"
+        >Войти</daniko-button
+      >
     </form>
   </div>
 </template>
@@ -49,11 +51,13 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
+      isLoading: false,
     };
   },
 
   methods: {
     handleLogin() {
+      this.isLoading = true;
       if (this.email.trim() && this.password.trim()) {
         if (
           this.email.trim() == "azatuk2005@mail.ru" &&
@@ -61,12 +65,14 @@ export default {
         ) {
           this.$router.push("/workers");
         } else {
+          this.isLoading = false;
           this.notificationHeading = "Неверные данные";
           this.notificationText =
             "Неверный логин или пароль, попробуйте заново";
           this.isNotificationOpen = true;
         }
       } else {
+        this.isLoading = false;
         this.notificationHeading = "Заполните все поля";
         this.notificationText = "Для входа введите почту и пароль";
         this.isNotificationOpen = true;

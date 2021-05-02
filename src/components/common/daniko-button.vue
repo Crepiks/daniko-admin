@@ -3,9 +3,13 @@
     <button
       @click="$emit('click')"
       class="button"
-      :class="{ 'button-border': type == 'border', 'button-block': isBlock }"
+      :class="{
+        'button-border': type == 'border',
+        'button-block': isBlock,
+        'button-loading': isLoading,
+      }"
     >
-      <slot></slot>
+      <span class="button-content"><slot></slot></span>
     </button>
   </div>
 </template>
@@ -20,6 +24,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -29,6 +37,7 @@ export default {
 
 .button {
   padding: 10px 25px;
+  position: relative;
   box-sizing: border-box;
   color: $white;
   font-size: 16px;
@@ -51,6 +60,48 @@ export default {
 
   &-block {
     width: 100%;
+  }
+
+  &-content {
+    transition: 200ms ease-in-out;
+  }
+
+  &-loading {
+    cursor: default;
+
+    & .button-content {
+      visibility: hidden;
+      opacity: 0;
+    }
+    &:hover {
+      opacity: 1;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      border: 4px solid transparent;
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: button-loading-spinner 1s ease infinite;
+    }
+  }
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+
+  to {
+    transform: rotate(1turn);
   }
 }
 </style>
