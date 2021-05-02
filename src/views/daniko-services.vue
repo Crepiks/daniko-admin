@@ -1,8 +1,15 @@
 <template>
   <div class="services-page">
+    <daniko-add-service
+      :isAddServiceBlockOpen="isAddServiceBlockOpen"
+      :workers="workers"
+      @close="isAddServiceBlockOpen = false"
+    />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
-      <daniko-button>Добавить услугу</daniko-button>
+      <daniko-button @click="isAddServiceBlockOpen = true"
+        >Добавить услугу</daniko-button
+      >
     </header>
     <div class="services-grid">
       <daniko-service-card
@@ -19,17 +26,21 @@
 <script>
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoServiceCard from "@/components/services/daniko-service-card.vue";
+import danikoAddService from "@/components/services/daniko-add-service.vue";
 import services from "@/data/services.js";
 import service from "@/data/service.js";
+import workers from "@/data/workers.js";
 
 export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-service-card": danikoServiceCard,
+    "daniko-add-service": danikoAddService,
   },
 
   data() {
     return {
+      workers: workers,
       services: services,
       activeService: {
         name: "",
@@ -46,6 +57,7 @@ export default {
         },
         providedWorkers: [{ id: 0, name: "" }],
       },
+      isAddServiceBlockOpen: false,
     };
   },
 
