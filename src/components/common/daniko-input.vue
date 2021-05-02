@@ -7,6 +7,7 @@
       :type="type"
       :placeholder="placeholder"
       :value="value"
+      @keypress="only == 'text' ? isLetter($event) : ''"
       @input="updateValue($event.target.value)"
     />
   </div>
@@ -23,6 +24,10 @@ export default {
       type: String,
       default: "text",
     },
+    only: {
+      type: String,
+      default: "",
+    },
     placeholder: {
       type: String,
     },
@@ -34,6 +39,12 @@ export default {
   methods: {
     updateValue(value) {
       this.$emit("input", value);
+    },
+
+    isLetter(e) {
+      let char = String.fromCharCode(e.keyCode);
+      if (/^[A-Za-zА-Яа-я ]+$/.test(char)) return true;
+      else e.preventDefault();
     },
   },
 };

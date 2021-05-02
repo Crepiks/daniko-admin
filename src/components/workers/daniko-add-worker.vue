@@ -17,12 +17,14 @@
         title="Имя"
         placeholder="Введите имя специалиста"
         v-model="newWorker.firstName"
+        only="text"
       />
       <daniko-input
         class="right-block-input"
         title="Фамилия"
         placeholder="Введите фамилию специалиста"
         v-model="newWorker.lastName"
+        only="text"
       />
       <daniko-input
         class="right-block-input"

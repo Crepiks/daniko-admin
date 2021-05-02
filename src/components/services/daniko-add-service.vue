@@ -17,6 +17,7 @@
         title="Название"
         placeholder="Введите название услуги"
         v-model="newService.name"
+        only="text"
       />
       <daniko-textarea
         class="right-block-input"
