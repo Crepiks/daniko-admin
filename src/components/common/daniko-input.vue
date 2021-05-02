@@ -7,7 +7,13 @@
       :type="type"
       :placeholder="placeholder"
       :value="value"
-      @keypress="only == 'text' ? isLetter($event) : ''"
+      @keypress="
+        only == 'text'
+          ? isLetter($event)
+          : only == 'number'
+          ? isNumber($event)
+          : ''
+      "
       @input="updateValue($event.target.value)"
     />
   </div>
@@ -44,6 +50,12 @@ export default {
     isLetter(e) {
       let char = String.fromCharCode(e.keyCode);
       if (/^[A-Za-zА-Яа-я ]+$/.test(char)) return true;
+      else e.preventDefault();
+    },
+
+    isNumber(e) {
+      let char = String.fromCharCode(e.keyCode);
+      if (/^[0-9., ]+$/.test(char)) return true;
       else e.preventDefault();
     },
   },

@@ -12,6 +12,7 @@
           type="tel"
           placeholder="Введите контактный номер телефона"
           v-model="newContacts.phoneNumber"
+          v-mask="phoneMask"
         />
         <daniko-input
           class="right-block-input"
@@ -30,6 +31,7 @@
           class="right-block-input"
           title="Координаты"
           type="text"
+          only="number"
           placeholder="42.924320, 71.380932"
           v-model="newContacts.coords"
         />
@@ -112,6 +114,7 @@ export default {
         mapcoords: "",
         coords: "",
       },
+      phoneMask: "+7 (###)-###-##-##",
     };
   },
 
