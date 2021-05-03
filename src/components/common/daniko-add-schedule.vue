@@ -14,6 +14,8 @@
         v-for="(day, index) in days"
         :key="index"
         :day="day.rus"
+        :from="schedule[day.eng].from"
+        :to="schedule[day.eng].to"
         @change-from-time="handleChangeFromTime($event, day)"
         @change-to-time="handleChangeToTime($event, day)"
       />
@@ -25,6 +27,12 @@
 import danikoAddDay from "@/components/common/daniko-add-day.vue";
 
 export default {
+  props: {
+    scheduleDefault: {
+      type: Object,
+    },
+  },
+
   components: {
     "daniko-add-day": danikoAddDay,
   },
@@ -93,6 +101,28 @@ export default {
       },
       showSchedule: true,
     };
+  },
+
+  watch: {
+    scheduleDefault() {
+      if (this.scheduleDefault) {
+        this.days.forEach((day) => {
+          if (this.scheduleDefault[day.eng]) {
+            this.schedule[day.eng].from = this.scheduleDefault[day.eng].substr(
+              0,
+              5
+            );
+            this.schedule[day.eng].to = this.scheduleDefault[day.eng].substr(
+              6,
+              11
+            );
+          } else {
+            this.schedule[day.eng].from = "";
+            this.schedule[day.eng].to = "";
+          }
+        });
+      }
+    },
   },
 
   methods: {

@@ -1,7 +1,9 @@
 <template>
   <daniko-right-block
     :isOpen="isAddWorkerBlockOpen"
-    title="Новый специалист"
+    :title="
+      worker.firstName ? 'Редактирование специалиста' : 'Новый специалист'
+    "
     @close-right-block="$emit('close')"
   >
     <daniko-notification
@@ -40,12 +42,14 @@
       />
       <daniko-add-schedule
         class="right-block-schedule"
+        :scheduleDefault="newWorker.schedule"
         @edit-schedule="handleScheduleEdit"
       />
       <daniko-choose-provided
         class="right-block-provided"
         title="Предоставляемые услуги"
         :cards="services"
+        :provided="newWorker.providedServices"
         @edit-provided="handleEditProvided"
       />
       <daniko-button
@@ -72,6 +76,9 @@ export default {
     isAddWorkerBlockOpen: {
       type: Boolean,
       default: false,
+    },
+    worker: {
+      type: Object,
     },
     services: {
       type: Array,
@@ -122,6 +129,14 @@ export default {
         "sunday",
       ],
     };
+  },
+
+  watch: {
+    worker() {
+      if (this.worker.firstName) {
+        this.newWorker = this.worker;
+      }
+    },
   },
 
   methods: {
@@ -181,8 +196,8 @@ export default {
           });
 
           if (isScheduleTimeCorrect) {
-            // write request here
-            console.log("ok");
+            this.$emit("save-worker", this.newWorker);
+            this.isLoading = false;
           } else {
             this.isLoading = false;
             this.notificationHeading = "Неверно выставлено время приёма";

@@ -28,10 +28,10 @@ export default {
       required: true,
     },
     from: {
-      type: Number,
+      type: String,
     },
     to: {
-      type: Number,
+      type: String,
     },
   },
 
@@ -49,6 +49,12 @@ export default {
     },
     toTime() {
       this.$emit("change-to-time", this.toTime);
+    },
+    from() {
+      this.fromTime = this.from;
+    },
+    to() {
+      this.toTime = this.to;
     },
   },
 

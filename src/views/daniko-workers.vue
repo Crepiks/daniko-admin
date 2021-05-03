@@ -1,9 +1,11 @@
 <template>
   <div class="workers-page">
-    <daniko-add-worker
+    <daniko-worker-fields
       :isAddWorkerBlockOpen="isAddWorkerBlockOpen"
       :services="services"
+      :worker="activeWorker"
       @close="isAddWorkerBlockOpen = false"
+      @save-worker="handleSaveWorker"
     />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
@@ -27,7 +29,7 @@
 <script>
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
-import danikoAddWorker from "@/components/workers/daniko-add-worker.vue";
+import danikoWorkerFileds from "@/components/workers/daniko-worker-fields.vue";
 import workers from "@/data/workers.js";
 import worker from "@/data/worker.js";
 import services from "@/data/services.js";
@@ -36,29 +38,14 @@ export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-worker-card": danikoWorkerCard,
-    "daniko-add-worker": danikoAddWorker,
+    "daniko-worker-fields": danikoWorkerFileds,
   },
 
   data() {
     return {
       workers: workers,
       services: services,
-      activeWorker: {
-        name: "",
-        job: "",
-        imagePath: "",
-        description: "",
-        schedule: {
-          monday: "",
-          tuesday: "",
-          wednesday: "",
-          thursday: "",
-          friday: "",
-          saturday: "",
-          sunday: "",
-        },
-        providedServices: [{ id: 0, name: "" }],
-      },
+      activeWorker: {},
       isAddWorkerBlockOpen: false,
     };
   },
@@ -67,12 +54,20 @@ export default {
     changeActiveWorker(workerId) {
       // запрос на получение worker
       console.log(workerId); // просто саюзал workerId
-      this.activeWorker.name = worker.name;
-      this.activeWorker.job = worker.job;
-      this.activeWorker.imagePath = worker.imagePath;
-      this.activeWorker.description = worker.description;
-      this.activeWorker.schedule = worker.schedule;
-      this.activeWorker.providedServices = worker.providedServices;
+      var parsedWorker = {};
+      parsedWorker.firstName = worker.firstName;
+      parsedWorker.lastName = worker.lastName;
+      parsedWorker.job = worker.job;
+      parsedWorker.imagePath = worker.imagePath;
+      parsedWorker.description = worker.description;
+      parsedWorker.schedule = worker.schedule;
+      parsedWorker.providedServices = worker.providedServices;
+      this.activeWorker = parsedWorker;
+      this.isAddWorkerBlockOpen = true;
+    },
+
+    handleSaveWorker(newWorker) {
+      console.log(newWorker);
     },
   },
 };

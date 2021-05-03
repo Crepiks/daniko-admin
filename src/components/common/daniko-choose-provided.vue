@@ -28,12 +28,25 @@ export default {
     cards: {
       type: Array,
     },
+    provided: {
+      type: Array,
+    },
   },
 
   data() {
     return {
       activeCards: [],
     };
+  },
+
+  mounted() {
+    this.activeCards = this.provided;
+  },
+
+  watch: {
+    provided() {
+      this.activeCards = this.provided;
+    },
   },
 
   methods: {
