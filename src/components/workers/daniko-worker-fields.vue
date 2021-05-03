@@ -13,7 +13,7 @@
       @close-notification="isNotificationOpen = false"
       :status="notificationStatus"
     />
-    <div class="right-block-component">
+    <div class="right-block-component" ref="content">
       <daniko-input
         class="right-block-input"
         title="Имя"
@@ -135,6 +135,31 @@ export default {
     worker() {
       if (this.worker.firstName) {
         this.newWorker = this.worker;
+      }
+    },
+
+    isAddWorkerBlockOpen() {
+      if (this.isAddWorkerBlockOpen) {
+        this.$refs.content.scrollIntoView();
+      }
+      if (!this.worker.firstName) {
+        this.newWorker = {
+          firstName: "",
+          lastName: "",
+          job: "",
+          imagePath: "",
+          description: "",
+          schedule: {
+            monday: "",
+            tuesday: "",
+            wednesday: "",
+            thursday: "",
+            friday: "",
+            saturday: "",
+            sunday: "",
+          },
+          providedServices: [{ id: 0, name: "" }],
+        };
       }
     },
   },

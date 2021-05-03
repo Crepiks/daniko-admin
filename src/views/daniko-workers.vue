@@ -4,7 +4,10 @@
       :isAddWorkerBlockOpen="isAddWorkerBlockOpen"
       :services="services"
       :worker="activeWorker"
-      @close="isAddWorkerBlockOpen = false"
+      @close="
+        isAddWorkerBlockOpen = false;
+        activeWorker = {};
+      "
       @save-worker="handleSaveWorker"
     />
     <header class="workers-header">
