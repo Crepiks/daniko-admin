@@ -1,7 +1,7 @@
 <template>
   <daniko-right-block
     :isOpen="isAddServiceBlockOpen"
-    title="Новая услуга"
+    :title="service.name ? 'Редактирование услуги' : 'Новая услуга'"
     @close-right-block="$emit('close')"
   >
     <daniko-notification
@@ -11,7 +11,7 @@
       @close-notification="isNotificationOpen = false"
       :status="notificationStatus"
     />
-    <div class="right-block-component">
+    <div class="right-block-component" ref="content">
       <daniko-input
         class="right-block-input"
         title="Название"
@@ -27,12 +27,14 @@
       />
       <daniko-add-schedule
         class="right-block-schedule"
+        :scheduleDefault="newService.schedule"
         @edit-schedule="handleScheduleEdit"
       />
       <daniko-choose-provided
         class="right-block-provided"
         title="Предоставляющие услугу врачи"
         :cards="workers"
+        :provided="newService.providedServices"
         @edit-provided="handleEditProvided"
       />
       <daniko-button
@@ -59,6 +61,9 @@ export default {
     isAddServiceBlockOpen: {
       type: Boolean,
       default: false,
+    },
+    service: {
+      type: Object,
     },
     workers: {
       type: Array,
@@ -107,6 +112,37 @@ export default {
         "sunday",
       ],
     };
+  },
+
+  watch: {
+    service() {
+      if (this.service.name) {
+        this.newService = this.service;
+      }
+    },
+
+    isAddServiceBlockOpen() {
+      if (this.isAddServiceBlockOpen) {
+        this.$refs.content.scrollIntoView();
+        if (!this.service.name) {
+          this.newService = {
+            name: "",
+            imagePath: "",
+            description: "",
+            schedule: {
+              monday: "",
+              tuesday: "",
+              wednesday: "",
+              thursday: "",
+              friday: "",
+              saturday: "",
+              sunday: "",
+            },
+            providedWorkers: [{ id: 0, name: "" }],
+          };
+        }
+      }
+    },
   },
 
   methods: {

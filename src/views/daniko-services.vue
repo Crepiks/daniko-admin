@@ -1,9 +1,13 @@
 <template>
   <div class="services-page">
-    <daniko-add-service
+    <daniko-service-fields
       :isAddServiceBlockOpen="isAddServiceBlockOpen"
       :workers="workers"
-      @close="isAddServiceBlockOpen = false"
+      :service="activeService"
+      @close="
+        isAddServiceBlockOpen = false;
+        activeService = {};
+      "
     />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
@@ -26,7 +30,7 @@
 <script>
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoServiceCard from "@/components/services/daniko-service-card.vue";
-import danikoAddService from "@/components/services/daniko-add-service.vue";
+import danikoServiceFields from "@/components/services/daniko-service-fields.vue";
 import services from "@/data/services.js";
 import service from "@/data/service.js";
 import workers from "@/data/workers.js";
@@ -35,7 +39,7 @@ export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-service-card": danikoServiceCard,
-    "daniko-add-service": danikoAddService,
+    "daniko-service-fields": danikoServiceFields,
   },
 
   data() {
@@ -65,11 +69,14 @@ export default {
     changeActiveWorker(serviceId) {
       // запрос на получение worker
       console.log(serviceId); // просто саюзал workerId
-      this.activeService.name = service.name;
-      this.activeService.imagePath = service.imagePath;
-      this.activeService.description = service.description;
-      this.activeService.schedule = service.schedule;
-      this.activeService.providedWorkers = service.providedWorkers;
+      var parsedService = {};
+      parsedService.name = service.name;
+      parsedService.imagePath = service.imagePath;
+      parsedService.description = service.description;
+      parsedService.schedule = service.schedule;
+      parsedService.providedWorkers = service.providedWorkers;
+      this.activeService = parsedService;
+      this.isAddServiceBlockOpen = true;
     },
   },
 };

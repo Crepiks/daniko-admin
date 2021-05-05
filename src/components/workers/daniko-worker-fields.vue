@@ -141,25 +141,25 @@ export default {
     isAddWorkerBlockOpen() {
       if (this.isAddWorkerBlockOpen) {
         this.$refs.content.scrollIntoView();
-      }
-      if (!this.worker.firstName) {
-        this.newWorker = {
-          firstName: "",
-          lastName: "",
-          job: "",
-          imagePath: "",
-          description: "",
-          schedule: {
-            monday: "",
-            tuesday: "",
-            wednesday: "",
-            thursday: "",
-            friday: "",
-            saturday: "",
-            sunday: "",
-          },
-          providedServices: [{ id: 0, name: "" }],
-        };
+        if (!this.worker.firstName) {
+          this.newWorker = {
+            firstName: "",
+            lastName: "",
+            job: "",
+            imagePath: "",
+            description: "",
+            schedule: {
+              monday: "",
+              tuesday: "",
+              wednesday: "",
+              thursday: "",
+              friday: "",
+              saturday: "",
+              sunday: "",
+            },
+            providedServices: [{ id: 0, name: "" }],
+          };
+        }
       }
     },
   },
@@ -221,7 +221,7 @@ export default {
           });
 
           if (isScheduleTimeCorrect) {
-            this.$emit("save-worker", this.newWorker);
+            this.$emit("save-service", this.newWorker);
             this.isLoading = false;
           } else {
             this.isLoading = false;
