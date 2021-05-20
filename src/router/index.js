@@ -1,39 +1,40 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import headerLayout from "@/components/layouts/daniko-sidebar-layout.vue";
-import workers from "@/views/daniko-workers.vue";
-import services from "@/views/daniko-services.vue";
-import contacts from "@/views/daniko-contacts.vue";
-import login from "@/views/daniko-login.vue";
+
+import MainLayout from "@/components/layouts/main";
+import Workers from "@/views/workers";
+import Services from "@/views/services";
+import Contacts from "@/views/contacts";
+import Login from "@/views/login";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    component: headerLayout,
+    component: MainLayout,
     children: [
       {
         path: "/workers",
         name: "workers",
-        component: workers,
+        component: Workers,
       },
       {
         path: "/services",
         name: "services",
-        component: services,
+        component: Services,
       },
       {
         path: "/contacts",
         name: "contacts",
-        component: contacts,
+        component: Contacts,
       },
     ],
   },
   {
     path: "/login",
     name: "login",
-    component: login,
+    component: Login,
   },
 ];
 
