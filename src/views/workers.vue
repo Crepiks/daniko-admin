@@ -1,7 +1,7 @@
 <template>
   <div class="workers-page">
     <daniko-worker-fields
-      :isAddWorkerBlockOpen="isAddWorkerBlockOpen || isEditWorkerBlockOpen"
+      :isWorkerBlockOpen="isAddWorkerBlockOpen || isEditWorkerBlockOpen"
       :edit-mode="isEditWorkerBlockOpen"
       :services="services"
       :worker="activeWorker"

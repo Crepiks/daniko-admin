@@ -1,7 +1,7 @@
 <template>
   <daniko-right-block
-    :isOpen="isAddServiceBlockOpen"
-    :title="service.name ? 'Редактирование услуги' : 'Новая услуга'"
+    :isOpen="isServiceBlockOpen"
+    :title="editMode ? 'Редактирование услуги' : 'Новая услуга'"
     @close-right-block="$emit('close')"
   >
     <daniko-notification
@@ -16,7 +16,7 @@
         class="right-block-input"
         title="Название"
         placeholder="Введите название услуги"
-        v-model="newService.name"
+        v-model="newService.title"
         only="text"
       />
       <daniko-textarea
@@ -34,14 +34,14 @@
         class="right-block-provided"
         title="Предоставляющие услугу врачи"
         :cards="workers"
-        :provided="newService.providedServices"
+        :provided="newService.providedWorkers"
         @edit-provided="handleEditProvided"
       />
       <daniko-button
         class="right-block-button"
         :isLoading="isLoading"
         @click="handleAddButton"
-        >Добавить услугу</daniko-button
+        >{{ editMode ? "Сохранить услугу" : "Добавить услугу" }}</daniko-button
       >
     </div>
   </daniko-right-block>
@@ -58,7 +58,7 @@ import danikoNotification from "@/components/common/daniko-notification.vue";
 
 export default {
   props: {
-    isAddServiceBlockOpen: {
+    isServiceBlockOpen: {
       type: Boolean,
       default: false,
     },
@@ -67,6 +67,10 @@ export default {
     },
     workers: {
       type: Array,
+    },
+    editMode: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -88,7 +92,7 @@ export default {
       notificationStatus: "error",
       isLoading: false,
       newService: {
-        name: "",
+        title: "",
         imagePath: "",
         description: "",
         schedule: {
@@ -116,17 +120,25 @@ export default {
 
   watch: {
     service() {
-      if (this.service.name) {
+      if (this.service.title) {
         this.newService = this.service;
       }
     },
 
-    isAddServiceBlockOpen() {
-      if (this.isAddServiceBlockOpen) {
+    workers() {
+      if (this.workers) {
+        this.workers.forEach((worker) => {
+          worker.title = worker.firstName + " " + worker.lastName;
+        });
+      }
+    },
+
+    isServiceBlockOpen() {
+      if (this.isServiceBlockOpen) {
         this.$refs.content.scrollIntoView();
-        if (!this.service.name) {
+        if (!this.service.title) {
           this.newService = {
-            name: "",
+            title: "",
             imagePath: "",
             description: "",
             schedule: {
@@ -165,7 +177,7 @@ export default {
       // сначала проходит валидация на обязательные поля, потом на формат времени приёма
       this.isLoading = true;
       this.isNotificationOpen = false;
-      if (this.newService.name.trim()) {
+      if (this.newService.title.trim()) {
         let isScheduleTimeFormatCorrect = true;
         this.scheduleDays.forEach((day) => {
           if (this.newService.schedule[day]) {

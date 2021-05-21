@@ -1,6 +1,6 @@
 <template>
   <daniko-right-block
-    :isOpen="isAddWorkerBlockOpen"
+    :isOpen="isWorkerBlockOpen"
     :title="editMode ? 'Редактирование специалиста' : 'Новый специалист'"
     @close-right-block="$emit('close')"
   >
@@ -73,7 +73,7 @@ import danikoNotification from "@/components/common/daniko-notification.vue";
 
 export default {
   props: {
-    isAddWorkerBlockOpen: {
+    isWorkerBlockOpen: {
       type: Boolean,
       default: false,
     },
@@ -142,8 +142,8 @@ export default {
       }
     },
 
-    isAddWorkerBlockOpen() {
-      if (this.isAddWorkerBlockOpen) {
+    isWorkerBlockOpen() {
+      if (this.isWorkerBlockOpen) {
         this.$refs.content.scrollIntoView();
         if (!this.worker.firstName) {
           this.newWorker = {
