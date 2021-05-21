@@ -1,9 +1,7 @@
 <template>
   <daniko-right-block
     :isOpen="isAddWorkerBlockOpen"
-    :title="
-      worker.firstName ? 'Редактирование специалиста' : 'Новый специалист'
-    "
+    :title="editMode ? 'Редактирование специалиста' : 'Новый специалист'"
     @close-right-block="$emit('close')"
   >
     <daniko-notification
@@ -56,7 +54,9 @@
         class="right-block-button"
         :isLoading="isLoading"
         @click="handleAddButton"
-        >Добавить специалиста</daniko-button
+        >{{
+          editMode ? "Сохранить специалиста" : "Добавить специалиста"
+        }}</daniko-button
       >
     </div>
   </daniko-right-block>
@@ -82,6 +82,10 @@ export default {
     },
     services: {
       type: Array,
+    },
+    editMode: {
+      type: Boolean,
+      default: false,
     },
   },
 

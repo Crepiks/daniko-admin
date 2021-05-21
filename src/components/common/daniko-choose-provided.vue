@@ -12,7 +12,7 @@
         :class="{ 'choose-provided-card-active': isCardActive(card.id) }"
         @click="changeActiveCards(card.id)"
       >
-        {{ card.name }}
+        {{ card.title }}
       </div>
     </div>
   </div>
