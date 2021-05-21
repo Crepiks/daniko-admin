@@ -20,9 +20,13 @@
       <daniko-worker-card
         v-for="worker in workers"
         :key="worker.id"
-        :imagePath="worker.imagePath"
-        :name="worker.name"
-        :job="worker.job"
+        :imagePath="
+          worker.image
+            ? worker.image.path
+            : 'https://www.ihep.org/wp-content/themes/ihep-theme/assets/images/user-profile.jpg'
+        "
+        :name="worker.firstName + ' ' + worker.lastName"
+        :job="worker.branch"
         @edit-worker="changeActiveWorker(worker.id)"
       />
     </div>
@@ -33,7 +37,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
 import danikoWorkerFileds from "@/components/workers/daniko-worker-fields.vue";
-import workers from "@/data/workers.js";
+import WorkersRequests from "@/requests/workers.js";
 import worker from "@/data/worker.js";
 import services from "@/data/services.js";
 
@@ -46,22 +50,38 @@ export default {
 
   data() {
     return {
-      workers: workers,
+      workers: [
+        {
+          id: 0,
+          firstName: "",
+          lastName: "",
+          image: {
+            path: "",
+          },
+          branch: "",
+        },
+      ],
       services: services,
       activeWorker: {},
       isAddWorkerBlockOpen: false,
     };
   },
 
+  mounted() {
+    WorkersRequests.findAll().then((res) => {
+      this.workers = res.workers;
+      console.log(this.workers);
+    });
+  },
+
   methods: {
     changeActiveWorker(workerId) {
-      // запрос на получение worker
       console.log(workerId); // просто саюзал workerId
       var parsedWorker = {};
       parsedWorker.firstName = worker.firstName;
       parsedWorker.lastName = worker.lastName;
       parsedWorker.job = worker.job;
-      parsedWorker.imagePath = worker.imagePath;
+      parsedWorker.imagePath = worker.image.path;
       parsedWorker.description = worker.description;
       parsedWorker.schedule = worker.schedule;
       parsedWorker.providedServices = worker.providedServices;
