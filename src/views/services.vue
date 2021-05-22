@@ -1,15 +1,26 @@
 <template>
   <div class="services-page">
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <daniko-service-fields
       :isServiceBlockOpen="isAddServiceBlockOpen || isEditServiceBlockOpen"
       :edit-mode="isEditServiceBlockOpen"
       :workers="workers"
       :service="activeService"
+      :isDataLoading="isRightBlockDataLoading"
+      :isButtonLoading="isRightBlockButtonLoading"
       @close="
         isAddServiceBlockOpen = false;
         isEditServiceBlockOpen = false;
         activeService = {};
       "
+      @create-service="handleCreateService"
+      @edit-service="handleEditService"
     />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
@@ -33,6 +44,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoServiceCard from "@/components/services/daniko-service-card.vue";
 import danikoServiceFields from "@/components/services/daniko-service-fields.vue";
+import danikoNotification from "@/components/common/daniko-notification.vue";
 import ServicesRequests from "@/requests/services.js";
 import WorkersRequests from "@/requests/workers.js";
 
@@ -41,10 +53,15 @@ export default {
     "daniko-button": danikoButton,
     "daniko-service-card": danikoServiceCard,
     "daniko-service-fields": danikoServiceFields,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
     return {
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
       services: [
         {
           id: 0,
@@ -63,6 +80,7 @@ export default {
         },
       ],
       activeService: {
+        id: 0,
         name: "",
         images: [
           {
@@ -84,13 +102,13 @@ export default {
       },
       isAddServiceBlockOpen: false,
       isEditServiceBlockOpen: false,
+      isRightBlockDataLoading: false,
+      isRightBlockButtonLoading: false,
     };
   },
 
   mounted() {
-    ServicesRequests.findAll().then((res) => {
-      this.services = res.services;
-    });
+    this.getAllServices();
 
     WorkersRequests.findAll().then((res) => {
       this.workers = res.workers;
@@ -98,20 +116,69 @@ export default {
   },
 
   methods: {
+    getAllServices() {
+      ServicesRequests.findAll().then((res) => {
+        this.services = res.services;
+      });
+    },
+
     changeActiveService(serviceId) {
       var service = {};
       var parsedService = {};
+      this.isRightBlockDataLoading = true;
       this.isEditServiceBlockOpen = true;
-      ServicesRequests.findOne(serviceId).then((res) => {
-        service = res.service;
+      ServicesRequests.findOne(serviceId)
+        .then((res) => {
+          service = res.service;
 
-        parsedService.title = service.title;
-        parsedService.images = service.images;
-        parsedService.description = service.description;
-        parsedService.schedule = service.schedule;
-        parsedService.providedWorkers = service.workers;
-        this.activeService = parsedService;
-      });
+          parsedService.title = service.title;
+          parsedService.images = service.images;
+          parsedService.description = service.description;
+          parsedService.schedule = service.schedule;
+          parsedService.providedWorkers = service.workers;
+          parsedService.id = service.id;
+          this.activeService = parsedService;
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и обновите страницу";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockDataLoading = false;
+        });
+    },
+
+    handleCreateService(createdService) {
+      console.log(createdService);
+    },
+
+    handleEditService(editedServiceId, editedService) {
+      this.isRightBlockButtonLoading = true;
+      const payload = { ...editedService };
+      delete payload.providedWorkers;
+      delete payload.images;
+
+      ServicesRequests.update(editedServiceId, payload)
+        .then(() => {
+          this.notificationHeading = "Данные обновлены";
+          this.notificationText = "Данные услуги сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditServiceBlockOpen = false;
+
+          this.getAllServices();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockButtonLoading = false;
+        });
     },
   },
 };

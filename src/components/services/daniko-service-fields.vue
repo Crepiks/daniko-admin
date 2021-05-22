@@ -2,6 +2,7 @@
   <daniko-right-block
     :isOpen="isServiceBlockOpen"
     :title="editMode ? 'Редактирование услуги' : 'Новая услуга'"
+    :isLoading="isDataLoading"
     @close-right-block="$emit('close')"
   >
     <daniko-notification
@@ -12,6 +13,7 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
+      <daniko-file-input />
       <daniko-input
         class="right-block-input"
         title="Название"
@@ -39,7 +41,7 @@
       />
       <daniko-button
         class="right-block-button"
-        :isLoading="isLoading"
+        :isLoading="isButtonLoading"
         @click="handleAddButton"
         >{{ editMode ? "Сохранить услугу" : "Добавить услугу" }}</daniko-button
       >
@@ -51,6 +53,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
+import danikoFileInput from "@/components/common/daniko-file-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
 import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
@@ -72,12 +75,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    isDataLoading: {
+      type: Boolean,
+      default: false,
+    },
+    isButtonLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   components: {
     "daniko-button": danikoButton,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
+    "daniko-file-input": danikoFileInput,
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
     "daniko-choose-provided": danikoChooseProvided,
@@ -90,8 +102,8 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
-      isLoading: false,
       newService: {
+        id: 0,
         title: "",
         imagePath: "",
         description: "",
@@ -138,6 +150,7 @@ export default {
         this.$refs.content.scrollIntoView();
         if (!this.service.title) {
           this.newService = {
+            id: 0,
             title: "",
             imagePath: "",
             description: "",
@@ -175,7 +188,6 @@ export default {
 
     handleAddButton() {
       // сначала проходит валидация на обязательные поля, потом на формат времени приёма
-      this.isLoading = true;
       this.isNotificationOpen = false;
       if (this.newService.title.trim()) {
         let isScheduleTimeFormatCorrect = true;
@@ -210,10 +222,16 @@ export default {
           });
 
           if (isScheduleTimeCorrect) {
-            // write request here
-            console.log("ok");
+            this.newService.workersIds = [];
+
+            this.newService.providedWorkers.forEach((worker) => {
+              this.newService.workersIds.push(worker.id);
+            });
+
+            this.editMode
+              ? this.$emit("edit-service", this.newService.id, this.newService)
+              : this.$emit("create-service", this.newService);
           } else {
-            this.isLoading = false;
             this.notificationHeading = "Неверно выставлено время приёма";
             this.notificationText =
               "Время окончания приёма не может быть раньше или равно времени начала приёма";
@@ -221,14 +239,12 @@ export default {
           }
         } else {
           // проверку валидации пришлось делать через отдельную переменну. isScheduleTimeFormatCorrect, потому что иначе notification мог разом вызваться много раз
-          this.isLoading = false;
           this.notificationHeading = "Неверный формат времени приёма";
           this.notificationText =
             "В поля времени приёма специалиста вводите от 00 до 24 для часов и от 00 до 59 для минут ";
           this.isNotificationOpen = true;
         }
       } else {
-        this.isLoading = false;
         this.notificationHeading = "Заполните обязательные поля";
         this.notificationText =
           "Для добавления услуги вы должны указать название";

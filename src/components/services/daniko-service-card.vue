@@ -5,7 +5,9 @@
       :style="{ backgroundImage: `url(${imagePath})` }"
     ></div>
     <div class="card-text">
-      <h3 class="card-title">{{ name }}</h3>
+      <h3 class="card-title">
+        {{ name.length > 20 ? name.slice(0, 20) + "..." : name }}
+      </h3>
       <div @click="$emit('edit-service')" class="card-link link">
         <span class="link-label">Редактировать</span>
         <i class="link-icon bx bx-right-arrow-alt"></i>

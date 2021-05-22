@@ -32,11 +32,7 @@
       <daniko-worker-card
         v-for="worker in workers"
         :key="worker.id"
-        :imagePath="
-          worker.image
-            ? baseUrl + worker.image.path
-            : 'https://www.ihep.org/wp-content/themes/ihep-theme/assets/images/user-profile.jpg'
-        "
+        :imagePath="worker.image ? baseUrl + worker.image.path : ''"
         :name="worker.firstName + ' ' + worker.lastName"
         :branch="worker.branch"
         @edit-worker="changeActiveWorker(worker.id)"
@@ -140,15 +136,13 @@ export default {
       console.log(newWorker);
     },
 
-    handleEditWorker(newWorkerId, editedWorker) {
+    handleEditWorker(editedWorkerId, editedWorker) {
       this.isRightBlockButtonLoading = true;
-      const payload = {
-        ...editedWorker,
-      };
+      const payload = { ...editedWorker };
       delete payload.providedServices;
       delete payload.imagePath;
 
-      WorkersRequests.update(newWorkerId, payload)
+      WorkersRequests.update(editedWorkerId, payload)
         .then(() => {
           this.notificationHeading = "Данные обновлены";
           this.notificationText = "Данные специалиста сохранены";
