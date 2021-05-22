@@ -111,8 +111,15 @@ export default {
     },
 
     handleEditWorker(newWorkerId, editedWorker) {
-      console.log(editedWorker);
-      WorkersRequests.update(newWorkerId, editedWorker)
+      const payload = {
+        ...editedWorker,
+      };
+      delete payload.providedServices;
+      delete payload.imagePath;
+
+      console.log(payload);
+
+      WorkersRequests.update(newWorkerId, payload)
         .then((res) => {
           console.log(res);
         })
