@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "@/store/index";
 
 import MainLayout from "@/components/layouts/main";
 import Workers from "@/views/workers";
@@ -13,6 +14,9 @@ const routes = [
   {
     path: "/",
     component: MainLayout,
+    meta: {
+      needAuth: true,
+    },
     children: [
       {
         path: "/workers",
@@ -35,6 +39,9 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
+    meta: {
+      unauthorizedOnly: true,
+    },
   },
 ];
 
@@ -42,6 +49,24 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.needAuth)) {
+    if (store.getters.isLoggedIn) {
+      next();
+    } else {
+      next("/login");
+    }
+  } else if (to.matched.some((record) => record.meta.unauthorizedOnly)) {
+    if (!store.getters.isLoggedIn) {
+      next();
+    } else {
+      next("/workers");
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

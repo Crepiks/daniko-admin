@@ -35,6 +35,7 @@
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoNotification from "@/components/common/daniko-notification.vue";
+import AuthRequests from "@/requests/auth.js";
 
 export default {
   components: {
@@ -59,18 +60,30 @@ export default {
     handleLogin() {
       this.isLoading = true;
       if (this.email.trim() && this.password.trim()) {
-        if (
-          this.email.trim() == "azatuk2005@mail.ru" &&
-          this.password.trim() == "Azat12345"
-        ) {
-          this.$router.push("/workers");
-        } else {
-          this.isLoading = false;
-          this.notificationHeading = "Неверные данные";
-          this.notificationText =
-            "Неверный логин или пароль, попробуйте заново";
-          this.isNotificationOpen = true;
-        }
+        const payload = {
+          email: this.email.trim(),
+          password: this.password.trim(),
+        };
+
+        AuthRequests.login(payload)
+          .then((res) => {
+            this.$store.commit("login", res.data.auth.token);
+          })
+          .catch((err) => {
+            if (err.response.status == 401) {
+              this.isLoading = false;
+              this.notificationHeading = "Неверные данные";
+              this.notificationText =
+                "Неверный логин или пароль, попробуйте заново";
+              this.isNotificationOpen = true;
+            } else if (err.response.status == 500) {
+              this.isLoading = false;
+              this.notificationHeading = "Что-то пошло не так";
+              this.notificationText =
+                "Проверьте подключение к интернету и попробуйте заново";
+              this.isNotificationOpen = true;
+            }
+          });
       } else {
         this.isLoading = false;
         this.notificationHeading = "Заполните все поля";

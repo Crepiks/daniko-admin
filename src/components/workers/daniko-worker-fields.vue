@@ -30,7 +30,7 @@
         class="right-block-input"
         title="Специальность"
         placeholder="Введите специальность специалиста"
-        v-model="newWorker.job"
+        v-model="newWorker.branch"
       />
       <daniko-textarea
         class="right-block-input"
@@ -109,7 +109,7 @@ export default {
       newWorker: {
         firstName: "",
         lastName: "",
-        job: "",
+        branch: "",
         imagePath: "",
         description: "",
         schedule: {
@@ -149,7 +149,7 @@ export default {
           this.newWorker = {
             firstName: "",
             lastName: "",
-            job: "",
+            branch: "",
             imagePath: "",
             description: "",
             schedule: {
@@ -191,7 +191,7 @@ export default {
       if (
         this.newWorker.firstName.trim() &&
         this.newWorker.lastName.trim() &&
-        this.newWorker.job.trim()
+        this.newWorker.branch.trim()
       ) {
         let isScheduleTimeFormatCorrect = true;
         this.scheduleDays.forEach((day) => {
@@ -225,7 +225,14 @@ export default {
           });
 
           if (isScheduleTimeCorrect) {
-            this.$emit("save-service", this.newWorker);
+            this.newWorker.servicesIds = [];
+
+            this.newWorker.providedServices.forEach((service) => {
+              this.newWorker.servicesIds.push(service.id);
+            });
+            this.editMode
+              ? this.$emit("edit-worker", this.newWorker)
+              : this.$emit("create-worker", this.newWorker);
             this.isLoading = false;
           } else {
             this.isLoading = false;

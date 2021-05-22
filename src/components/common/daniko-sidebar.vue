@@ -40,7 +40,7 @@
 export default {
   methods: {
     logout() {
-      this.$router.push("/login");
+      this.$store.commit("logout");
     },
   },
 };

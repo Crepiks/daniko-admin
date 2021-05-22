@@ -10,7 +10,8 @@
         isEditWorkerBlockOpen = false;
         activeWorker = {};
       "
-      @save-worker="handleSaveWorker"
+      @create-worker="handleCreateWorker"
+      @edit-worker="handleEditWorker"
     />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
@@ -28,7 +29,7 @@
             : 'https://www.ihep.org/wp-content/themes/ihep-theme/assets/images/user-profile.jpg'
         "
         :name="worker.firstName + ' ' + worker.lastName"
-        :job="worker.branch"
+        :branch="worker.branch"
         @edit-worker="changeActiveWorker(worker.id)"
       />
     </div>
@@ -95,7 +96,7 @@ export default {
 
         parsedWorker.firstName = worker.firstName;
         parsedWorker.lastName = worker.lastName;
-        parsedWorker.job = worker.branch;
+        parsedWorker.branch = worker.branch;
         parsedWorker.imagePath = worker.image.path;
         parsedWorker.description = worker.description;
         parsedWorker.schedule = worker.schedule;
@@ -104,8 +105,17 @@ export default {
       });
     },
 
-    handleSaveWorker(newWorker) {
+    handleCreateWorker(newWorker) {
       console.log(newWorker);
+    },
+
+    handleEditWorker(editedWorker) {
+      WorkersRequests.update(editedWorker)
+        .then((res) => {
+          console.log(res);
+          console.log("k");
+        })
+        .catch((err) => console.log(err));
     },
   },
 };

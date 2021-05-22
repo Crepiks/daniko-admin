@@ -6,7 +6,7 @@
     ></div>
     <div class="card-text">
       <h3 class="card-title">{{ name }}</h3>
-      <span class="card-subtitle">{{ job }}</span>
+      <span class="card-subtitle">{{ branch }}</span>
       <div @click="$emit('edit-worker')" class="card-link link">
         <span class="link-label">Редактировать</span>
         <i class="link-icon bx bx-right-arrow-alt"></i>
@@ -26,7 +26,7 @@ export default {
       type: String,
       required: true,
     },
-    job: {
+    branch: {
       type: String,
       required: true,
     },
