@@ -1,10 +1,19 @@
 <template>
   <div class="workers-page">
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <daniko-worker-fields
       :isWorkerBlockOpen="isAddWorkerBlockOpen || isEditWorkerBlockOpen"
       :edit-mode="isEditWorkerBlockOpen"
       :services="services"
       :worker="activeWorker"
+      :isDataLoading="isRightBlockDataLoading"
+      :isButtonLoading="isRightBlockButtonLoading"
       @close="
         isAddWorkerBlockOpen = false;
         isEditWorkerBlockOpen = false;
@@ -40,6 +49,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoWorkerCard from "@/components/workers/daniko-worker-card.vue";
 import danikoWorkerFileds from "@/components/workers/daniko-worker-fields.vue";
+import danikoNotification from "@/components/common/daniko-notification.vue";
 import WorkersRequests from "@/requests/workers.js";
 import ServicesRequests from "@/requests/services.js";
 import config from "@/config.js";
@@ -49,10 +59,15 @@ export default {
     "daniko-button": danikoButton,
     "daniko-worker-card": danikoWorkerCard,
     "daniko-worker-fields": danikoWorkerFileds,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
     return {
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
       baseUrl: config.apiUrl,
       workers: [
         {
@@ -73,13 +88,13 @@ export default {
       activeWorker: {},
       isAddWorkerBlockOpen: false,
       isEditWorkerBlockOpen: false,
+      isRightBlockDataLoading: false,
+      isRightBlockButtonLoading: false,
     };
   },
 
   mounted() {
-    WorkersRequests.findAll().then((res) => {
-      this.workers = res.workers;
-    });
+    this.getAllWorkers();
 
     ServicesRequests.findAll().then((res) => {
       this.services = res.services;
@@ -87,23 +102,38 @@ export default {
   },
 
   methods: {
+    getAllWorkers() {
+      WorkersRequests.findAll().then((res) => {
+        this.workers = res.workers;
+      });
+    },
+
     changeActiveWorker(workerId) {
       var worker = {};
       var parsedWorker = {};
+      this.isRightBlockDataLoading = true;
       this.isEditWorkerBlockOpen = true;
-      WorkersRequests.findOne(workerId).then((res) => {
-        worker = res.worker;
+      WorkersRequests.findOne(workerId)
+        .then((res) => {
+          worker = res.worker;
 
-        parsedWorker.firstName = worker.firstName;
-        parsedWorker.lastName = worker.lastName;
-        parsedWorker.branch = worker.branch;
-        parsedWorker.imagePath = worker.image.path;
-        parsedWorker.description = worker.description;
-        parsedWorker.schedule = worker.schedule;
-        parsedWorker.providedServices = worker.services;
-        parsedWorker.id = worker.id;
-        this.activeWorker = parsedWorker;
-      });
+          parsedWorker.firstName = worker.firstName;
+          parsedWorker.lastName = worker.lastName;
+          parsedWorker.branch = worker.branch;
+          parsedWorker.imagePath = worker.image.path;
+          parsedWorker.description = worker.description;
+          parsedWorker.schedule = worker.schedule;
+          parsedWorker.providedServices = worker.services;
+          parsedWorker.id = worker.id;
+          this.activeWorker = parsedWorker;
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и обновите страницу";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => (this.isRightBlockDataLoading = false));
     },
 
     handleCreateWorker(newWorker) {
@@ -111,19 +141,32 @@ export default {
     },
 
     handleEditWorker(newWorkerId, editedWorker) {
+      this.isRightBlockButtonLoading = true;
       const payload = {
         ...editedWorker,
       };
       delete payload.providedServices;
       delete payload.imagePath;
 
-      console.log(payload);
-
       WorkersRequests.update(newWorkerId, payload)
-        .then((res) => {
-          console.log(res);
+        .then(() => {
+          this.notificationHeading = "Данные обновлены";
+          this.notificationText = "Данные специалиста сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditWorkerBlockOpen = false;
+
+          this.getAllWorkers();
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockButtonLoading = false;
+        });
     },
   },
 };

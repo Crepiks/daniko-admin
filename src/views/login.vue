@@ -78,7 +78,7 @@ export default {
               this.isNotificationOpen = true;
             } else if (err.response.status == 500) {
               this.isLoading = false;
-              this.notificationHeading = "Что-то пошло не так";
+              this.notificationHeading = "Произошла ошибка";
               this.notificationText =
                 "Проверьте подключение к интернету и попробуйте заново";
               this.isNotificationOpen = true;
