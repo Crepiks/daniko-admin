@@ -13,7 +13,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     if (store.getters.isLoggedIn) {
-      config.headers["Authorization"] = store.getters.accessToken;
+      config.headers["Authorization"] = "Bearer " + store.getters.authToken;
     }
     return config;
   },

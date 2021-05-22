@@ -231,7 +231,7 @@ export default {
               this.newWorker.servicesIds.push(service.id);
             });
             this.editMode
-              ? this.$emit("edit-worker", this.newWorker)
+              ? this.$emit("edit-worker", this.newWorker.id, this.newWorker)
               : this.$emit("create-worker", this.newWorker);
             this.isLoading = false;
           } else {

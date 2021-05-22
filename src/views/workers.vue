@@ -101,6 +101,7 @@ export default {
         parsedWorker.description = worker.description;
         parsedWorker.schedule = worker.schedule;
         parsedWorker.providedServices = worker.services;
+        parsedWorker.id = worker.id;
         this.activeWorker = parsedWorker;
       });
     },
@@ -109,11 +110,11 @@ export default {
       console.log(newWorker);
     },
 
-    handleEditWorker(editedWorker) {
-      WorkersRequests.update(editedWorker)
+    handleEditWorker(newWorkerId, editedWorker) {
+      console.log(editedWorker);
+      WorkersRequests.update(newWorkerId, editedWorker)
         .then((res) => {
           console.log(res);
-          console.log("k");
         })
         .catch((err) => console.log(err));
     },

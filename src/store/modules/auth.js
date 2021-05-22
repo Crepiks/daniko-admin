@@ -7,7 +7,10 @@ export default {
   },
   mutations: {
     login(state, token) {
+      console.log("login mut");
+      console.log(token);
       localStorage.setItem("authToken", token);
+      console.log(localStorage.getItem("authToken"));
       state.isLoggedIn = true;
       router.push("/workers");
     },
@@ -19,5 +22,6 @@ export default {
   },
   getters: {
     isLoggedIn: (state) => state.isLoggedIn,
+    authToken: (state) => state.authToken,
   },
 };
