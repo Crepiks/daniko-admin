@@ -2,13 +2,8 @@
   <div class="schedule">
     <header class="schedule-header">
       <h3 class="schedule-title">График работы</h3>
-      <span class="schedule-link" @click="showSchedule = !showSchedule">{{
-        showSchedule
-          ? "Не показывать график специалиста"
-          : "Показывать график специалиста"
-      }}</span>
     </header>
-    <div class="schedule-days" v-if="showSchedule">
+    <div class="schedule-days">
       <daniko-add-day
         class="schedule-day"
         v-for="(day, index) in days"
@@ -99,7 +94,6 @@ export default {
           to: "",
         },
       },
-      showSchedule: true,
     };
   },
 

@@ -12,6 +12,7 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
+      <daniko-file-input />
       <daniko-input
         class="right-block-input"
         title="Имя"
@@ -66,6 +67,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
+import danikoFileInput from "@/components/common/daniko-file-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
 import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
@@ -93,6 +95,7 @@ export default {
     "daniko-button": danikoButton,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
+    "daniko-file-input": danikoFileInput,
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
     "daniko-choose-provided": danikoChooseProvided,
