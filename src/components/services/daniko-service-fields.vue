@@ -39,12 +39,24 @@
         :provided="newService.providedWorkers"
         @edit-provided="handleEditProvided"
       />
-      <daniko-button
-        class="right-block-button"
-        :isLoading="isButtonLoading"
-        @click="handleAddButton"
-        >{{ editMode ? "Сохранить услугу" : "Добавить услугу" }}</daniko-button
-      >
+      <div class="right-block-buttons">
+        <daniko-button
+          class="right-block-button"
+          :isLoading="isButtonLoading"
+          @click="handleAddButton"
+          >{{
+            editMode ? "Сохранить услугу" : "Добавить услугу"
+          }}</daniko-button
+        >
+        <div
+          v-if="editMode"
+          class="right-block-delete"
+          @click="$emit('delete-service')"
+        >
+          <i class="bx bx-trash right-block-delete-icon"></i>
+          <span class="right-block-delete-title">Удалить</span>
+        </div>
+      </div>
     </div>
   </daniko-right-block>
 </template>
@@ -163,7 +175,7 @@ export default {
               saturday: "",
               sunday: "",
             },
-            providedWorkers: [{ id: 0, name: "" }],
+            providedWorkers: [],
           };
         }
       }
@@ -269,8 +281,40 @@ export default {
     margin-bottom: 25px;
   }
 
+  &-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   &-button {
     margin-top: 10px;
+    margin-right: 20px;
+  }
+
+  &-delete {
+    margin-top: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: $error;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &-icon {
+      margin-right: 5px;
+      font-size: 20px;
+    }
+
+    &-title {
+      font-size: 15px;
+    }
   }
 
   &-schedule {

@@ -140,8 +140,6 @@ export default {
       delete payload.providedServices;
       delete payload.imagePath;
 
-      console.log(payload);
-
       WorkersRequests.create(payload)
         .then(() => {
           this.notificationHeading = "Специалист создан";

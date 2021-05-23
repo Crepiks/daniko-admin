@@ -21,6 +21,7 @@
       "
       @create-service="handleCreateService"
       @edit-service="handleEditService"
+      @delete-service="handleDeleteService"
     />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
@@ -32,7 +33,7 @@
       <daniko-service-card
         v-for="service in services"
         :key="service.id"
-        :imagePath="service.images[0].path || ''"
+        :imagePath="service.images[0] ? service.images[0].path : ''"
         :name="service.title"
         @edit-service="changeActiveService(service.id)"
       />
@@ -151,7 +152,32 @@ export default {
     },
 
     handleCreateService(createdService) {
-      console.log(createdService);
+      this.isRightBlockButtonLoading = true;
+      const payload = { ...createdService };
+
+      delete payload.imagePath;
+      delete payload.providedWorkers;
+
+      ServicesRequests.create(payload)
+        .then(() => {
+          this.notificationHeading = "Услуга создана";
+          this.notificationText = "Данные новой услуги сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isAddServiceBlockOpen = false;
+
+          this.getAllServices();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockButtonLoading = false;
+        });
     },
 
     handleEditService(editedServiceId, editedService) {
@@ -178,6 +204,31 @@ export default {
         })
         .finally(() => {
           this.isRightBlockButtonLoading = false;
+        });
+    },
+
+    handleDeleteService() {
+      this.isRightBlockDataLoading = true;
+
+      ServicesRequests.delete(this.activeService.id)
+        .then(() => {
+          this.notificationHeading = "Услуга создана";
+          this.notificationText = "Данные новой услуги сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditServiceBlockOpen = false;
+
+          this.getAllServices();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockDataLoading = false;
         });
     },
   },
