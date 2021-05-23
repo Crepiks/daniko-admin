@@ -13,7 +13,7 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
-      <daniko-file-input />
+      <daniko-file-input v-if="editMode" />
       <daniko-input
         class="right-block-input"
         title="Название"

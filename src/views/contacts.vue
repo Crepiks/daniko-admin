@@ -1,5 +1,12 @@
 <template>
   <div class="contacts-page">
+    <daniko-notification
+      :isActive="isNotificationOpen"
+      :heading="notificationHeading"
+      :text="notificationText"
+      @close-notification="isNotificationOpen = false"
+      :status="notificationStatus"
+    />
     <daniko-right-block
       :isOpen="isRightBlockOpen"
       title="Редактирование контаков"
@@ -37,11 +44,14 @@
         />
         <div class="right-block-map">
           <yandex-map
-            :coords="getNewCoords"
+            :coords="[contacts.lat, contacts.lon]"
             :zoom="18"
             style="width: 100%; height: 100%"
           >
-            <ymap-marker marker-id="1" :coords="getNewCoords"></ymap-marker>
+            <ymap-marker
+              marker-id="1"
+              :coords="[contacts.lat, contacts.lon]"
+            ></ymap-marker>
           </yandex-map>
         </div>
         <daniko-button class="right-block-button">Сохранить</daniko-button>
@@ -57,27 +67,30 @@
       <div class="contacts-container">
         <div class="contact">
           <span class="contact-label">Номер телефона:</span>
-          <span class="contact-data">{{ contacts.phoneNumber }}</span>
+          <span class="contact-data">{{ contacts.phone || "-" }}</span>
         </div>
         <div class="contact">
           <span class="contact-label">Электронная почта:</span>
-          <span class="contact-data">{{ contacts.email }}</span>
+          <span class="contact-data">{{ contacts.email || "-" }}</span>
         </div>
         <div class="contact">
           <span class="contact-label">Почтовый индекс:</span>
-          <span class="contact-data">{{ contacts.mailIndex }}</span>
+          <span class="contact-data">{{ contacts.postIndex || "-" }}</span>
         </div>
         <div class="contact">
           <span class="contact-label">Адрес:</span>
-          <span class="contact-data">{{ contacts.address }}</span>
+          <span class="contact-data">{{ contacts.address || "-" }}</span>
         </div>
         <div class="contacts-map">
           <yandex-map
-            :coords="contacts.coords"
+            :coords="[contacts.lat, contacts.lon]"
             :zoom="16"
             style="width: 100%; height: 100%"
           >
-            <ymap-marker marker-id="1" :coords="contacts.coords"></ymap-marker>
+            <ymap-marker
+              marker-id="1"
+              :coords="[contacts.lat, contacts.lon]"
+            ></ymap-marker>
           </yandex-map>
         </div>
       </div>
@@ -94,18 +107,24 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
-import contacts from "@/data/contacts.js";
+import danikoNotification from "@/components/common/daniko-notification.vue";
+import ContactsRequests from "@/requests/contacts.js";
 
 export default {
   components: {
     "daniko-button": danikoButton,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
+    "daniko-notification": danikoNotification,
   },
 
   data() {
     return {
-      contacts: contacts,
+      isNotificationOpen: false,
+      notificationHeading: "",
+      notificationText: "",
+      notificationStatus: "error",
+      contacts: {},
       isRightBlockOpen: false,
       newContacts: {
         phoneNumber: "",
@@ -116,6 +135,10 @@ export default {
       },
       phoneMask: "+7 (###)-###-##-##",
     };
+  },
+
+  mounted() {
+    this.getContacts();
   },
 
   watch: {
@@ -129,6 +152,14 @@ export default {
           ", " +
           String(this.contacts.coords[1]);
       }
+    },
+  },
+
+  methods: {
+    getContacts() {
+      ContactsRequests.findAll().then((res) => {
+        this.contacts = res.contacts;
+      });
     },
   },
 
