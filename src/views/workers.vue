@@ -21,6 +21,7 @@
       "
       @create-worker="handleCreateWorker"
       @edit-worker="handleEditWorker"
+      @delete-worker="handleDeleteWorker"
     />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
@@ -116,7 +117,7 @@ export default {
           parsedWorker.firstName = worker.firstName;
           parsedWorker.lastName = worker.lastName;
           parsedWorker.branch = worker.branch;
-          parsedWorker.imagePath = worker.image.path;
+          parsedWorker.imagePath = worker.image ? worker.image.path : "";
           parsedWorker.description = worker.description;
           parsedWorker.schedule = worker.schedule;
           parsedWorker.providedServices = worker.services;
@@ -127,13 +128,40 @@ export default {
           this.notificationHeading = "Произошла ошибка";
           this.notificationText =
             "Проверьте подключение к интернету и обновите страницу";
+          this.notificationStatus = "error";
           this.isNotificationOpen = true;
         })
         .finally(() => (this.isRightBlockDataLoading = false));
     },
 
     handleCreateWorker(newWorker) {
-      console.log(newWorker);
+      this.isRightBlockButtonLoading = true;
+      const payload = { ...newWorker };
+      delete payload.providedServices;
+      delete payload.imagePath;
+
+      console.log(payload);
+
+      WorkersRequests.create(payload)
+        .then(() => {
+          this.notificationHeading = "Специалист создан";
+          this.notificationText = "Данные нового специалиста сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isAddWorkerBlockOpen = false;
+
+          this.getAllWorkers();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockButtonLoading = false;
+        });
     },
 
     handleEditWorker(editedWorkerId, editedWorker) {
@@ -160,6 +188,31 @@ export default {
         })
         .finally(() => {
           this.isRightBlockButtonLoading = false;
+        });
+    },
+
+    handleDeleteWorker() {
+      this.isRightBlockDataLoading = true;
+
+      WorkersRequests.delete(this.activeWorker.id)
+        .then(() => {
+          this.notificationHeading = "Специалист удален";
+          this.notificationText = "Данные специалиста удалены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditWorkerBlockOpen = false;
+
+          this.getAllWorkers();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.isRightBlockDataLoading = false;
         });
     },
   },

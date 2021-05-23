@@ -13,7 +13,7 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
-      <daniko-file-input />
+      <daniko-file-input v-if="editMode" />
       <daniko-input
         class="right-block-input"
         title="Имя"
@@ -52,14 +52,24 @@
         :provided="newWorker.providedServices"
         @edit-provided="handleEditProvided"
       />
-      <daniko-button
-        class="right-block-button"
-        :isLoading="isButtonLoading"
-        @click="handleAddButton"
-        >{{
-          editMode ? "Сохранить специалиста" : "Добавить специалиста"
-        }}</daniko-button
-      >
+      <div class="right-block-buttons">
+        <daniko-button
+          class="right-block-button"
+          :isLoading="isButtonLoading"
+          @click="handleAddButton"
+          >{{
+            editMode ? "Сохранить специалиста" : "Добавить специалиста"
+          }}</daniko-button
+        >
+        <div
+          v-if="editMode"
+          class="right-block-delete"
+          @click="$emit('delete-worker')"
+        >
+          <i class="bx bx-trash right-block-delete-icon"></i>
+          <span class="right-block-delete-title">Удалить</span>
+        </div>
+      </div>
     </div>
   </daniko-right-block>
 </template>
@@ -172,7 +182,7 @@ export default {
               saturday: "",
               sunday: "",
             },
-            providedServices: [{ id: 0, name: "" }],
+            providedServices: [],
           };
         }
       }
@@ -281,8 +291,40 @@ export default {
     margin-bottom: 25px;
   }
 
+  &-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   &-button {
     margin-top: 10px;
+    margin-right: 20px;
+  }
+
+  &-delete {
+    margin-top: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: $error;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &-icon {
+      margin-right: 5px;
+      font-size: 20px;
+    }
+
+    &-title {
+      font-size: 15px;
+    }
   }
 
   &-schedule {
