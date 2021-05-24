@@ -17,8 +17,8 @@
           class="right-block-input"
           title="Номер телефона"
           type="tel"
-          placeholder="Введите контактный номер телефона"
-          v-model="newContacts.phoneNumber"
+          placeholder="+7 (000)-000-00-00"
+          v-model="newContacts.phone"
           v-mask="phoneMask"
         />
         <daniko-input
@@ -30,9 +30,15 @@
         />
         <daniko-input
           class="right-block-input"
+          title="Адрес"
+          placeholder="Введите адрес"
+          v-model="newContacts.address"
+        />
+        <daniko-input
+          class="right-block-input"
           title="Почтовый индекс"
           placeholder="Введите почтовый индекс"
-          v-model="newContacts.mailIndex"
+          v-model="newContacts.postIndex"
         />
         <daniko-input
           class="right-block-input"
@@ -44,17 +50,28 @@
         />
         <div class="right-block-map">
           <yandex-map
-            :coords="[contacts.lat, contacts.lon]"
+            :coords="[
+              newContacts.coords.split(',')[0] || 0,
+              newContacts.coords.split(',')[1] || 0,
+            ]"
             :zoom="18"
             style="width: 100%; height: 100%"
           >
             <ymap-marker
               marker-id="1"
-              :coords="[contacts.lat, contacts.lon]"
+              :coords="[
+                newContacts.coords.split(',')[0] || 0,
+                newContacts.coords.split(',')[1] || 0,
+              ]"
             ></ymap-marker>
           </yandex-map>
         </div>
-        <daniko-button class="right-block-button">Сохранить</daniko-button>
+        <daniko-button
+          :loading="buttonLoading"
+          class="right-block-button"
+          @click="handleSaveContacts"
+          >Сохранить</daniko-button
+        >
       </div>
     </daniko-right-block>
     <header class="contacts-header">
@@ -127,13 +144,15 @@ export default {
       contacts: {},
       isRightBlockOpen: false,
       newContacts: {
-        phoneNumber: "",
+        phone: "",
         email: "",
-        mailIndex: "",
-        mapcoords: "",
+        address: "",
+        postIndex: "",
         coords: "",
       },
       phoneMask: "+7 (###)-###-##-##",
+      buttonLoading: false,
+      dataLoading: false,
     };
   },
 
@@ -144,13 +163,12 @@ export default {
   watch: {
     isRightBlockOpen() {
       if (this.isRightBlockOpen) {
-        this.newContacts.phoneNumber = this.contacts.phoneNumber;
+        this.newContacts.phone = this.contacts.phone;
         this.newContacts.email = this.contacts.email;
-        this.newContacts.mailIndex = this.contacts.mailIndex;
+        this.newContacts.address = this.contacts.address;
+        this.newContacts.postIndex = this.contacts.postIndex;
         this.newContacts.coords =
-          String(this.contacts.coords[0]) +
-          ", " +
-          String(this.contacts.coords[1]);
+          (this.contacts.lat || 0) + ", " + (this.contacts.lon || 0);
       }
     },
   },
@@ -160,6 +178,36 @@ export default {
       ContactsRequests.findAll().then((res) => {
         this.contacts = res.contacts;
       });
+    },
+
+    handleSaveContacts() {
+      this.buttonLoading = true;
+      const copyContacts = this.newContacts;
+      const payload = { ...copyContacts };
+      payload.lat = payload.coords.split(",")[0].trim();
+      payload.lon = payload.coords.split(",")[1].trim();
+      delete payload.coords;
+
+      ContactsRequests.update(payload)
+        .then(() => {
+          this.notificationHeading = "Контакты обновлены";
+          this.notificationText = "Данные новых контактов сохранены";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isRightBlockOpen = false;
+
+          this.getContacts();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.buttonLoading = false;
+        });
     },
   },
 
