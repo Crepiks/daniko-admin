@@ -12,6 +12,9 @@
       :edit-mode="isEditWorkerBlockOpen"
       :services="services"
       :worker="activeWorker"
+      :workerFile="activeWorkerFile"
+      :fileUploadLoading="fileUploadLoading"
+      :fileChnageLoading="fileChangeLoading"
       :isDataLoading="isRightBlockDataLoading"
       :isButtonLoading="isRightBlockButtonLoading"
       @close="
@@ -22,6 +25,8 @@
       @create-worker="handleCreateWorker"
       @edit-worker="handleEditWorker"
       @delete-worker="handleDeleteWorker"
+      @upload-file="handleUploadFile"
+      @change-file="handleChangeFile"
     />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
@@ -87,10 +92,13 @@ export default {
         },
       ],
       activeWorker: {},
+      activeWorkerFile: null,
       isAddWorkerBlockOpen: false,
       isEditWorkerBlockOpen: false,
       isRightBlockDataLoading: false,
       isRightBlockButtonLoading: false,
+      fileUploadLoading: false,
+      fileChangeLoading: false,
     };
   },
 
@@ -216,6 +224,22 @@ export default {
         .finally(() => {
           this.isRightBlockDataLoading = false;
         });
+    },
+
+    handleUploadFile(file) {
+      this.fileUploadLoading = true;
+      setTimeout(() => {
+        this.activeWorkerFile = file;
+        this.fileUploadLoading = false;
+      }, 3000);
+    },
+
+    handleChangeFile() {
+      this.fileChangeLoading = true;
+      setTimeout(() => {
+        this.activeWorkerFile = null;
+        this.fileChangeLoading = false;
+      }, 3000);
     },
   },
 };

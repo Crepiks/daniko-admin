@@ -13,7 +13,14 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
-      <daniko-file-input v-if="editMode" />
+      <daniko-file-input
+        v-if="editMode"
+        :file="workerFile"
+        :uploadLoading="fileUploadLoading"
+        :changeLoading="fileChangeLoading"
+        @upload-file="repeatUploadFileEmit"
+        @change-file="$emit('change-file')"
+      />
       <daniko-input
         class="right-block-input"
         title="Имя"
@@ -93,6 +100,9 @@ export default {
     worker: {
       type: Object,
     },
+    workerFile: {
+      type: File,
+    },
     services: {
       type: Array,
     },
@@ -105,6 +115,14 @@ export default {
       default: false,
     },
     isButtonLoading: {
+      type: Boolean,
+      default: false,
+    },
+    fileUploadLoading: {
+      type: Boolean,
+      default: false,
+    },
+    fileChangeLoading: {
       type: Boolean,
       default: false,
     },
@@ -272,6 +290,10 @@ export default {
           "Для добавления специалиста вы должны указать: имя, фамилию и специальность";
         this.isNotificationOpen = true;
       }
+    },
+
+    repeatUploadFileEmit(file) {
+      this.$emit("upload-file", file);
     },
   },
 };

@@ -17,6 +17,14 @@ class WorkersRequests {
     return request.get(`/workers/${workerId}`).then((res) => res.data);
   }
 
+  static uploadImage(workerId, imageFile) {
+    return request({
+      url: `/workers/${workerId}/image`,
+      method: "POST",
+      data: imageFile,
+    });
+  }
+
   static update(workerId, payload) {
     return request({
       url: `/workers/${workerId}`,
