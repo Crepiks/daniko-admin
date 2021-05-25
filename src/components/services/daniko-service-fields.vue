@@ -159,7 +159,7 @@ export default {
 
     isServiceBlockOpen() {
       if (this.isServiceBlockOpen) {
-        this.$refs.content.scrollIntoView();
+        this.$refs.content.scrollTo(0, 0);
         if (!this.service.title) {
           this.newService = {
             id: 0,

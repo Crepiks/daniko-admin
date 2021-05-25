@@ -165,7 +165,7 @@ export default {
 
     isWorkerBlockOpen() {
       if (this.isWorkerBlockOpen) {
-        this.$refs.content.scrollIntoView();
+        this.$refs.content.scrollTo(0, 0);
         if (!this.worker.firstName) {
           this.newWorker = {
             firstName: "",
