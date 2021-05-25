@@ -33,7 +33,9 @@
       <daniko-worker-card
         v-for="worker in workers"
         :key="worker.id"
-        :imagePath="worker.image ? baseUrl + worker.image.path : ''"
+        :imagePath="
+          worker.image ? baseUrl + worker.image.path : defaultWorkerImage
+        "
         :name="worker.firstName + ' ' + worker.lastName"
         :branch="worker.branch"
         @edit-worker="changeActiveWorker(worker.id)"
@@ -49,6 +51,7 @@ import danikoWorkerFileds from "@/components/workers/daniko-worker-fields.vue";
 import danikoNotification from "@/components/common/daniko-notification.vue";
 import WorkersRequests from "@/requests/workers.js";
 import ServicesRequests from "@/requests/services.js";
+import defaultWorkerImage from "@/assets/images/default-worker-image.png";
 import config from "@/config.js";
 
 export default {
@@ -61,6 +64,7 @@ export default {
 
   data() {
     return {
+      defaultWorkerImage: defaultWorkerImage,
       isNotificationOpen: false,
       notificationHeading: "",
       notificationText: "",

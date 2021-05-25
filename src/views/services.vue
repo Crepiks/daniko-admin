@@ -33,7 +33,9 @@
       <daniko-service-card
         v-for="service in services"
         :key="service.id"
-        :imagePath="service.images[0] ? service.images[0].path : ''"
+        :imagePath="
+          service.images[0] ? service.images[0].path : defaultServiceImage
+        "
         :name="service.title"
         @edit-service="changeActiveService(service.id)"
       />
@@ -48,6 +50,7 @@ import danikoServiceFields from "@/components/services/daniko-service-fields.vue
 import danikoNotification from "@/components/common/daniko-notification.vue";
 import ServicesRequests from "@/requests/services.js";
 import WorkersRequests from "@/requests/workers.js";
+import defaultServiceImage from "@/assets/images/default-service-image.png";
 
 export default {
   components: {
@@ -59,6 +62,7 @@ export default {
 
   data() {
     return {
+      defaultServiceImage: defaultServiceImage,
       isNotificationOpen: false,
       notificationHeading: "",
       notificationText: "",
