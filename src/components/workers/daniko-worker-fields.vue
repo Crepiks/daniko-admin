@@ -15,11 +15,10 @@
     <div class="right-block-component" ref="content">
       <daniko-file-input
         v-if="editMode"
-        :file="workerFile"
+        :filePreview="worker.imagePath"
         :uploadLoading="fileUploadLoading"
         :changeLoading="fileChangeLoading"
         @upload-file="repeatUploadFileEmit"
-        @change-file="$emit('change-file')"
       />
       <daniko-input
         class="right-block-input"
@@ -99,9 +98,6 @@ export default {
     },
     worker: {
       type: Object,
-    },
-    workerFile: {
-      type: File,
     },
     services: {
       type: Array,

@@ -26,7 +26,6 @@
       @edit-worker="handleEditWorker"
       @delete-worker="handleDeleteWorker"
       @upload-file="handleUploadFile"
-      @change-file="handleChangeFile"
     />
     <header class="workers-header">
       <h2 class="workers-title">Специалисты</h2>
@@ -228,18 +227,29 @@ export default {
 
     handleUploadFile(file) {
       this.fileUploadLoading = true;
-      setTimeout(() => {
-        this.activeWorkerFile = file;
-        this.fileUploadLoading = false;
-      }, 3000);
-    },
 
-    handleChangeFile() {
-      this.fileChangeLoading = true;
-      setTimeout(() => {
-        this.activeWorkerFile = null;
-        this.fileChangeLoading = false;
-      }, 3000);
+      let formData = new FormData();
+      formData.append("image", file);
+
+      WorkersRequests.uploadImage(this.activeWorker.id, formData)
+        .then(() => {
+          this.notificationHeading = "Изображение сохранено";
+          this.notificationText =
+            "Изображение специалиста сохранено и будет отображаться на сайте";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditWorkerBlockOpen = false;
+          this.fileUploadLoading = false;
+
+          this.getAllWorkers();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        });
     },
   },
 };

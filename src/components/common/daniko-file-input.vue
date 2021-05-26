@@ -1,57 +1,67 @@
 <template>
-  <transition name="fade" mode="out-in">
-    <div v-if="!file" class="file-input" key="file-input">
-      <label for="fileInput" class="file-input-label">
-        <transition name="loading-fade" mode="out-in">
-          <div
-            v-if="!uploadLoading"
-            class="file-input-content"
-            key="file-input-content"
-          >
-            <i class="bx bx-cloud-upload file-input-icon"></i>
-            <span class="file-input-title"
-              >Нажмите, чтобы загрузить изображение</span
+  <div>
+    <input
+      type="file"
+      id="fileInput"
+      ref="fileInput"
+      class="file-input-field"
+      @change="handleFileUpload"
+    />
+    <transition name="fade" mode="out-in">
+      <div v-if="!filePreview" class="file-input" key="file-input">
+        <label for="fileInput" class="file-input-label">
+          <transition name="loading-fade" mode="out-in">
+            <div
+              v-if="!uploadLoading"
+              class="file-input-content"
+              key="file-input-content"
             >
-          </div>
-          <div v-else class="file-input-loading" key="file-input-loading"></div>
-        </transition>
-      </label>
-      <input
-        type="file"
-        id="fileInput"
-        ref="fileInput"
-        class="file-input-field"
-        @change="handleFileUpload"
-      />
-      <daniko-notification
-        :isActive="isNotificationOpen"
-        :heading="notificationHeading"
-        :text="notificationText"
-        @close-notification="isNotificationOpen = false"
-        :status="notificationStatus"
-      />
-    </div>
-    <div v-else class="file-preview" key="file-preview">
-      <span class="file-preview-title">{{
-        file.name.length > 35 ? file.name.slice(0, 35) + "..." : file.name
-      }}</span>
-      <div class="file-preview-icons">
-        <transition name="loading-fade" mode="out-in">
-          <i
-            v-if="!changeLoading"
-            class="bx bx-refresh file-preview-change"
-            @click="handleChangeFile"
-            key="change-icon"
-          ></i>
-          <div v-else class="file-preview-loading" key="change-loading"></div>
-        </transition>
+              <i class="bx bx-cloud-upload file-input-icon"></i>
+              <span class="file-input-title"
+                >Нажмите, чтобы загрузить изображение</span
+              >
+            </div>
+            <div
+              v-else
+              class="file-input-loading"
+              key="file-input-loading"
+            ></div>
+          </transition>
+        </label>
+        <daniko-notification
+          :isActive="isNotificationOpen"
+          :heading="notificationHeading"
+          :text="notificationText"
+          @close-notification="isNotificationOpen = false"
+          :status="notificationStatus"
+        />
       </div>
-    </div>
-  </transition>
+      <div v-else class="file-preview" key="file-preview">
+        <img
+          :src="baseUrl + filePreview"
+          alt="Изображение специалиста"
+          class="file-preview-image"
+        />
+        <div class="file-preview-functional">
+          <label
+            for="fileInput"
+            @click="uploadLoading ? handleChangeFile : ''"
+            class="file-preview-button"
+            :class="{ 'file-preview-button-disabled': uploadLoading }"
+            >Заменить изображение</label
+          >
+          <transition name="loading-fade">
+            <div v-if="uploadLoading" class="file-preview-loading"></div>
+          </transition>
+        </div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script>
 import danikoNotification from "@/components/common/daniko-notification.vue";
+import config from "@/config.js";
 
 export default {
   components: {
@@ -59,8 +69,8 @@ export default {
   },
 
   props: {
-    file: {
-      type: File,
+    filePreview: {
+      type: String,
       required: false,
     },
     uploadLoading: {
@@ -79,6 +89,7 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
+      baseUrl: config.apiUrl,
     };
   },
 
@@ -181,48 +192,44 @@ export default {
   }
 }
 
-@keyframes loading-spinner {
-  from {
-    transform: rotate(0turn);
-  }
-
-  to {
-    transform: rotate(1turn);
-  }
-}
-
 .file-preview {
   margin-bottom: 30px;
   width: 100%;
-  height: 200px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: #cccccc30;
+  height: auto;
   border-radius: 10px;
 
-  &-title {
-    margin-right: 10px;
+  &-image {
+    margin-bottom: 15px;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  &-functional {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+  }
+
+  &-button {
+    margin-bottom: 30px;
     color: $primary;
     font-size: 16px;
-  }
-
-  &-icons {
-    position: relative;
-    min-width: 20px;
-  }
-
-  &-change {
-    margin-top: 5px;
-    color: $primary;
-    font-size: 25px;
-    opacity: 0.6;
+    opacity: 0.7;
     transition: 200ms ease-in-out;
     cursor: pointer;
 
     &:hover {
       opacity: 1;
+    }
+
+    &-disabled {
+      opacity: 0.5;
+      cursor: default;
+
+      &:hover {
+        opacity: 0.5;
+      }
     }
   }
 
@@ -232,15 +239,26 @@ export default {
     &::after {
       content: "";
       position: absolute;
-      top: -7px;
-      left: 5px;
-      width: 12px;
-      height: 12px;
+      top: 0;
+      margin-left: 12px;
+      margin-top: 1px;
+      width: 10px;
+      height: 10px;
       border: 3px solid transparent;
       border-top-color: $primary;
       border-radius: 50%;
       animation: loading-spinner 1s ease infinite;
     }
+  }
+}
+
+@keyframes loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+
+  to {
+    transform: rotate(1turn);
   }
 }
 </style>
