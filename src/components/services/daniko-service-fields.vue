@@ -17,6 +17,7 @@
         v-if="editMode"
         :filesPreviews="service.images"
         :uploadLoading="fileUploadLoading"
+        :deletingFileIds="deletingFileIds"
         @upload-file="repeatUploadFileEmit"
         @delete-file="repeatDeleteFileEmit"
       />
@@ -105,6 +106,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    deletingFileIds: {
+      type: Array,
+    },
   },
 
   components: {
@@ -155,7 +159,6 @@ export default {
   watch: {
     service() {
       if (this.service.title) {
-        console.log(this.service);
         this.newService = this.service;
       }
     },

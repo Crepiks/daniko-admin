@@ -32,17 +32,29 @@
         </transition>
       </label>
     </div>
-    <div v-if="filesPreviews.length > 0" class="multiple-previews">
+    <div
+      v-if="filesPreviews ? filesPreviews.length > 0 : false"
+      class="multiple-previews"
+    >
       <div class="preview" v-for="(file, index) in filesPreviews" :key="index">
         <div
           class="preview-image"
           :style="{ backgroundImage: `url(${baseUrl + file.path})` }"
         ></div>
         <div class="preview-icon">
-          <i
-            class="bx bx-trash preview-delete"
-            @click="emit('delete-file', file.id)"
-          ></i>
+          <transition name="loading-fade" mode="out-in">
+            <div
+              v-if="isFileLoading(file.id)"
+              key="preview-loading-icon"
+              class="preview-loading"
+            ></div>
+            <i
+              v-else
+              key="preview-delete-icon"
+              class="bx bx-trash preview-delete"
+              @click="$emit('delete-file', file.id)"
+            ></i>
+          </transition>
         </div>
       </div>
     </div>
@@ -63,9 +75,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    deleteLoading: {
-      type: Boolean,
-      default: false,
+    deletingFileIds: {
+      type: Array,
     },
   },
 
@@ -96,6 +107,14 @@ export default {
           "Вы можете загружать изображения в формате png, jpeg и raw";
         this.isNotificationOpen = true;
       }
+    },
+
+    isFileLoading(fileId) {
+      var result = false;
+      this.deletingFileIds.forEach((deletingFileId) => {
+        if (fileId == deletingFileId) result = true;
+      });
+      return result;
     },
   },
 };
@@ -191,6 +210,7 @@ export default {
 }
 
 .preview {
+  position: relative;
   width: 100%;
   height: 100px;
   box-sizing: border-box;
@@ -226,6 +246,26 @@ export default {
 
     &:hover {
       opacity: 1;
+    }
+  }
+
+  &-loading {
+    cursor: default;
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 8%;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      width: 12px;
+      height: 12px;
+      border: 3px solid transparent;
+      border-top-color: $primary;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: loading-spinner 1s ease infinite;
     }
   }
 }

@@ -13,6 +13,7 @@
       :workers="workers"
       :service="activeService"
       :fileUploadLoading="fileUploadLoading"
+      :deletingFileIds="deletingFileIds"
       :isDataLoading="isRightBlockDataLoading"
       :isButtonLoading="isRightBlockButtonLoading"
       @close="
@@ -24,6 +25,7 @@
       @edit-service="handleEditService"
       @delete-service="handleDeleteService"
       @upload-file="handleUploadFile"
+      @delete-file="handleDeleteFile"
     />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
@@ -116,6 +118,7 @@ export default {
       isRightBlockDataLoading: false,
       isRightBlockButtonLoading: false,
       fileUploadLoading: false,
+      deletingFileIds: [],
     };
   },
 
@@ -223,8 +226,8 @@ export default {
 
       ServicesRequests.delete(this.activeService.id)
         .then(() => {
-          this.notificationHeading = "Услуга создана";
-          this.notificationText = "Данные новой услуги сохранены";
+          this.notificationHeading = "Услуга удалена";
+          this.notificationText = "Данные услуги удалены";
           this.notificationStatus = "success";
           this.isNotificationOpen = true;
           this.isEditServiceBlockOpen = false;
@@ -291,6 +294,54 @@ export default {
         })
         .finally(() => {
           this.fileUploadLoading = false;
+        });
+    },
+
+    handleDeleteFile(fileId) {
+      this.deletingFileIds.push(fileId);
+
+      ServicesRequests.deleteImage(this.activeService.id, fileId)
+        .then(() => {
+          this.notificationHeading = "Изображение удалено";
+          this.notificationText =
+            "Чтобы добавить новые изображения, нажмите на синее поле";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+
+          var service = {}; // нужно отобразить только что загруженное изображение, для этого приходится полностью получить данные о услуге, но не включать загрузку, чтобы весь конктент не блокировался после загрузки одной картники
+          var parsedService = {};
+
+          ServicesRequests.findOne(this.activeService.id)
+            .then((res) => {
+              service = res.service;
+
+              parsedService.title = service.title;
+              parsedService.images = service.images;
+              parsedService.description = service.description;
+              parsedService.schedule = service.schedule;
+              parsedService.providedWorkers = service.workers;
+              parsedService.id = service.id;
+              this.activeService = parsedService;
+            })
+            .catch(() => {
+              this.notificationHeading = "Произошла ошибка";
+              this.notificationText =
+                "Проверьте подключение к интернету и обновите страницу";
+              this.isNotificationOpen = true;
+            });
+
+          this.getAllServices();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          const index = this.deletingFileIds.indexOf(fileId);
+          this.deletingFileIds.splice(index, 1);
         });
     },
   },
