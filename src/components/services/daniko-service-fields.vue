@@ -13,7 +13,13 @@
       :status="notificationStatus"
     />
     <div class="right-block-component" ref="content">
-      <daniko-file-input v-if="editMode" />
+      <daniko-multiple-file-input
+        v-if="editMode"
+        :filesPreviews="service.images"
+        :uploadLoading="fileUploadLoading"
+        @upload-file="repeatUploadFileEmit"
+        @delete-file="repeatDeleteFileEmit"
+      />
       <daniko-input
         class="right-block-input"
         title="Название"
@@ -65,7 +71,7 @@
 import danikoButton from "@/components/common/daniko-button.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
-import danikoFileInput from "@/components/common/daniko-file-input.vue";
+import danikoMultipleFileInput from "@/components/common/daniko-multiple-file-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
 import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
@@ -95,13 +101,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    fileUploadLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   components: {
     "daniko-button": danikoButton,
     "daniko-right-block": danikoRightBlock,
     "daniko-input": danikoInput,
-    "daniko-file-input": danikoFileInput,
+    "daniko-multiple-file-input": danikoMultipleFileInput,
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
     "daniko-choose-provided": danikoChooseProvided,
@@ -145,6 +155,7 @@ export default {
   watch: {
     service() {
       if (this.service.title) {
+        console.log(this.service);
         this.newService = this.service;
       }
     },
@@ -262,6 +273,14 @@ export default {
           "Для добавления услуги вы должны указать название";
         this.isNotificationOpen = true;
       }
+    },
+
+    repeatUploadFileEmit(file) {
+      this.$emit("upload-file", file);
+    },
+
+    repeatDeleteFileEmit(fileId) {
+      this.$emit("delete-file", fileId);
     },
   },
 };

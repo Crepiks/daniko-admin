@@ -12,7 +12,6 @@
       :edit-mode="isEditWorkerBlockOpen"
       :services="services"
       :worker="activeWorker"
-      :workerFile="activeWorkerFile"
       :fileUploadLoading="fileUploadLoading"
       :fileChnageLoading="fileChangeLoading"
       :isDataLoading="isRightBlockDataLoading"
@@ -91,7 +90,6 @@ export default {
         },
       ],
       activeWorker: {},
-      activeWorkerFile: null,
       isAddWorkerBlockOpen: false,
       isEditWorkerBlockOpen: false,
       isRightBlockDataLoading: false,
@@ -221,6 +219,7 @@ export default {
           this.isNotificationOpen = true;
         })
         .finally(() => {
+          this.activeWorker = {};
           this.isRightBlockDataLoading = false;
         });
     },
@@ -239,7 +238,6 @@ export default {
           this.notificationStatus = "success";
           this.isNotificationOpen = true;
           this.isEditWorkerBlockOpen = false;
-          this.fileUploadLoading = false;
 
           this.getAllWorkers();
         })
@@ -249,6 +247,9 @@ export default {
             "Проверьте подключение к интернету и попробуйте снова";
           this.notificationStatus = "error";
           this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.fileUploadLoading = false;
         });
     },
   },

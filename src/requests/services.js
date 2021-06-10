@@ -17,6 +17,21 @@ class ServicesRequests {
     return request.get(`/services/${serviceId}`).then((res) => res.data);
   }
 
+  static uploadImage(serviceId, imageFile) {
+    return request({
+      url: `/services/${serviceId}/images`,
+      method: "POST",
+      data: imageFile,
+    });
+  }
+
+  static deleteImage(serviceId, fileId) {
+    return request({
+      url: `/services/${serviceId}/images/${fileId}`,
+      method: "DELETE",
+    });
+  }
+
   static update(serviceId, payload) {
     return request({
       url: `/services/${serviceId}`,

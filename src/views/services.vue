@@ -12,6 +12,7 @@
       :edit-mode="isEditServiceBlockOpen"
       :workers="workers"
       :service="activeService"
+      :fileUploadLoading="fileUploadLoading"
       :isDataLoading="isRightBlockDataLoading"
       :isButtonLoading="isRightBlockButtonLoading"
       @close="
@@ -22,6 +23,7 @@
       @create-service="handleCreateService"
       @edit-service="handleEditService"
       @delete-service="handleDeleteService"
+      @upload-file="handleUploadFile"
     />
     <header class="services-header">
       <h2 class="services-title">Услуги</h2>
@@ -34,7 +36,9 @@
         v-for="service in services"
         :key="service.id"
         :imagePath="
-          service.images[0] ? service.images[0].path : defaultServiceImage
+          service.images[0]
+            ? baseUrl + service.images[0].path
+            : defaultServiceImage
         "
         :name="service.title"
         @edit-service="changeActiveService(service.id)"
@@ -51,6 +55,7 @@ import danikoNotification from "@/components/common/daniko-notification.vue";
 import ServicesRequests from "@/requests/services.js";
 import WorkersRequests from "@/requests/workers.js";
 import defaultServiceImage from "@/assets/images/default-service-image.png";
+import config from "@/config.js";
 
 export default {
   components: {
@@ -62,6 +67,7 @@ export default {
 
   data() {
     return {
+      baseUrl: config.apiUrl,
       defaultServiceImage: defaultServiceImage,
       isNotificationOpen: false,
       notificationHeading: "",
@@ -109,6 +115,7 @@ export default {
       isEditServiceBlockOpen: false,
       isRightBlockDataLoading: false,
       isRightBlockButtonLoading: false,
+      fileUploadLoading: false,
     };
   },
 
@@ -233,6 +240,57 @@ export default {
         })
         .finally(() => {
           this.isRightBlockDataLoading = false;
+        });
+    },
+
+    handleUploadFile(file) {
+      this.fileUploadLoading = true;
+
+      let formData = new FormData();
+      formData.append("image", file);
+
+      ServicesRequests.uploadImage(this.activeService.id, formData)
+        .then(() => {
+          this.notificationHeading = "Изображение сохранено";
+          this.notificationText =
+            "Изображение сервиса сохранено и будет отображаться на сайте";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+          this.isEditWorkerBlockOpen = false;
+
+          var service = {}; // нужно отобразить только что загруженное изображение, для этого приходится полностью получить данные о услуге, но не включать загрузку, чтобы весь конктент не блокировался после загрузки одной картники
+          var parsedService = {};
+
+          ServicesRequests.findOne(this.activeService.id)
+            .then((res) => {
+              service = res.service;
+
+              parsedService.title = service.title;
+              parsedService.images = service.images;
+              parsedService.description = service.description;
+              parsedService.schedule = service.schedule;
+              parsedService.providedWorkers = service.workers;
+              parsedService.id = service.id;
+              this.activeService = parsedService;
+            })
+            .catch(() => {
+              this.notificationHeading = "Произошла ошибка";
+              this.notificationText =
+                "Проверьте подключение к интернету и обновите страницу";
+              this.isNotificationOpen = true;
+            });
+
+          this.getAllServices();
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и попробуйте снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          this.fileUploadLoading = false;
         });
     },
   },
