@@ -33,7 +33,7 @@
         >Добавить услугу</daniko-button
       >
     </header>
-    <div class="services-grid">
+    <div v-if="services ? services.length > 0 : false" class="services-grid">
       <daniko-service-card
         v-for="service in services"
         :key="service.id"
@@ -45,6 +45,20 @@
         :name="service.title"
         @edit-service="changeActiveService(service.id)"
       />
+    </div>
+    <div v-else class="services-empty">
+      <img
+        src="@/assets/images/empty-image.png"
+        alt="Нет услуг"
+        class="services-empty-image"
+      />
+      <h2 class="services-empty-title">
+        Нет услуг.
+        <span class="services-empty-link" @click="isAddServiceBlockOpen = true"
+          >Нажмите,</span
+        >
+        чтобы добавить услугу
+      </h2>
     </div>
   </div>
 </template>
@@ -75,23 +89,8 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
-      services: [
-        {
-          id: 0,
-          title: "",
-          images: [
-            {
-              id: 0,
-              path: "",
-            },
-          ],
-        },
-      ],
-      workers: [
-        {
-          id: 0,
-        },
-      ],
+      services: [],
+      workers: [],
       activeService: {
         id: 0,
         name: "",
@@ -378,6 +377,39 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     column-gap: 20px;
     row-gap: 40px;
+  }
+
+  &-empty {
+    margin-top: 150px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &-image {
+      margin-bottom: 30px;
+      width: 230px;
+      opacity: 0.9;
+    }
+
+    &-title {
+      color: $main-dark;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 0.7;
+    }
+
+    &-link {
+      color: $primary;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: 200ms ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
   }
 }
 </style>

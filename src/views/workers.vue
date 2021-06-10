@@ -32,7 +32,7 @@
         >Добавить специалиста</daniko-button
       >
     </header>
-    <div class="workers-grid">
+    <div v-if="workers ? workers.length > 0 : false" class="workers-grid">
       <daniko-worker-card
         v-for="worker in workers"
         :key="worker.id"
@@ -43,6 +43,20 @@
         :branch="worker.branch"
         @edit-worker="changeActiveWorker(worker.id)"
       />
+    </div>
+    <div v-else class="workers-empty">
+      <img
+        src="@/assets/images/empty-image.png"
+        alt="Нет специалистов"
+        class="workers-empty-image"
+      />
+      <h2 class="workers-empty-title">
+        Нет специалистов.
+        <span class="workers-empty-link" @click="isAddWorkerBlockOpen = true"
+          >Нажмите,</span
+        >
+        чтобы добавить специалиста
+      </h2>
     </div>
   </div>
 </template>
@@ -73,22 +87,8 @@ export default {
       notificationText: "",
       notificationStatus: "error",
       baseUrl: config.apiUrl,
-      workers: [
-        {
-          id: 0,
-          firstName: "",
-          lastName: "",
-          image: {
-            path: "",
-          },
-          branch: "",
-        },
-      ],
-      services: [
-        {
-          id: 0,
-        },
-      ],
+      workers: [],
+      services: [],
       activeWorker: {},
       isAddWorkerBlockOpen: false,
       isEditWorkerBlockOpen: false,
@@ -286,6 +286,39 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     column-gap: 20px;
     row-gap: 40px;
+  }
+
+  &-empty {
+    margin-top: 150px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &-image {
+      margin-bottom: 30px;
+      width: 230px;
+      opacity: 0.9;
+    }
+
+    &-title {
+      color: $main-dark;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 0.7;
+    }
+
+    &-link {
+      color: $primary;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: 200ms ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
   }
 }
 </style>
