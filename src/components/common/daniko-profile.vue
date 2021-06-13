@@ -59,6 +59,7 @@ import danikoButton from "@/components/common/daniko-button.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoNotification from "@/components/common/daniko-notification.vue";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
@@ -91,6 +92,15 @@ export default {
   methods: {
     handleChangingEmail() {
       if (this.email.trim() && this.newEmail.trim()) {
+        if (this.email.trim() == mapGetters("userEmail")) {
+          // запрос
+        } else {
+          this.notificationHeading = "Неверная текущая электронаая почта";
+          this.notificationText =
+            "Для обновления почты нужно ввести текущую почту аккаунта. Попробуй снова";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        }
         this.$emit("close-profile");
         this.notificationHeading = "Почта обновлена";
         this.notificationText =
@@ -101,6 +111,7 @@ export default {
         this.notificationHeading = "Заполните все поля";
         this.notificationText =
           "Заполните поля текущей и новой электронной почты";
+        this.notificationStatus = "error";
         this.isNotificationOpen = true;
       }
     },
@@ -111,10 +122,12 @@ export default {
         this.notificationHeading = "Пароль обновлен";
         this.notificationText =
           "Используйте новый пароль для входа в админ панель";
+        this.notificationStatus = "success";
         this.isNotificationOpen = true;
       } else {
         this.notificationHeading = "Заполните все поля";
         this.notificationText = "Заполните поля текущего и нового пароля";
+        this.notificationStatus = "error";
         this.isNotificationOpen = true;
       }
     },

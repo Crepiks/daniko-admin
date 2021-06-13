@@ -32,32 +32,38 @@
         >Добавить специалиста</daniko-button
       >
     </header>
-    <div v-if="workers ? workers.length > 0 : false" class="workers-grid">
-      <daniko-worker-card
-        v-for="worker in workers"
-        :key="worker.id"
-        :imagePath="
-          worker.image ? baseUrl + worker.image.path : defaultWorkerImage
-        "
-        :name="worker.firstName + ' ' + worker.lastName"
-        :branch="worker.branch"
-        @edit-worker="changeActiveWorker(worker.id)"
-      />
-    </div>
-    <div v-else class="workers-empty">
-      <img
-        src="@/assets/images/empty-image.png"
-        alt="Нет специалистов"
-        class="workers-empty-image"
-      />
-      <h2 class="workers-empty-title">
-        Нет специалистов.
-        <span class="workers-empty-link" @click="isAddWorkerBlockOpen = true"
-          >Нажмите,</span
-        >
-        чтобы добавить специалиста
-      </h2>
-    </div>
+    <transition name="empty-fade" mode="out-in">
+      <div
+        v-if="workers ? workers.length > 0 : false"
+        class="workers-grid"
+        key="workers-grid"
+      >
+        <daniko-worker-card
+          v-for="worker in workers"
+          :key="worker.id"
+          :imagePath="
+            worker.image ? baseUrl + worker.image.path : defaultWorkerImage
+          "
+          :name="worker.firstName + ' ' + worker.lastName"
+          :branch="worker.branch"
+          @edit-worker="changeActiveWorker(worker.id)"
+        />
+      </div>
+      <div v-else class="workers-empty" key="workers-empty">
+        <img
+          src="@/assets/images/empty-image.png"
+          alt="Нет специалистов"
+          class="workers-empty-image"
+        />
+        <h2 class="workers-empty-title">
+          Нет специалистов.
+          <span class="workers-empty-link" @click="isAddWorkerBlockOpen = true"
+            >Нажмите,</span
+          >
+          чтобы добавить специалиста
+        </h2>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -320,5 +326,16 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style lang="scss">
+.empty-fade-enter-active,
+.empty-fade-leave-active {
+  transition: opacity 0.15s;
+}
+.empty-fade-enter,
+.empty-fade-leave-to {
+  opacity: 0;
 }
 </style>

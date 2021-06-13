@@ -33,33 +33,37 @@
         >Добавить услугу</daniko-button
       >
     </header>
-    <div v-if="services ? services.length > 0 : false" class="services-grid">
-      <daniko-service-card
-        v-for="service in services"
-        :key="service.id"
-        :imagePath="
-          service.images[0]
-            ? baseUrl + service.images[0].path
-            : defaultServiceImage
-        "
-        :name="service.title"
-        @edit-service="changeActiveService(service.id)"
-      />
-    </div>
-    <div v-else class="services-empty">
-      <img
-        src="@/assets/images/empty-image.png"
-        alt="Нет услуг"
-        class="services-empty-image"
-      />
-      <h2 class="services-empty-title">
-        Нет услуг.
-        <span class="services-empty-link" @click="isAddServiceBlockOpen = true"
-          >Нажмите,</span
-        >
-        чтобы добавить услугу
-      </h2>
-    </div>
+    <transition name="empty-fade" mode="out-in" key="services-grid">
+      <div v-if="services ? services.length > 0 : false" class="services-grid">
+        <daniko-service-card
+          v-for="service in services"
+          :key="service.id"
+          :imagePath="
+            service.images[0]
+              ? baseUrl + service.images[0].path
+              : defaultServiceImage
+          "
+          :name="service.title"
+          @edit-service="changeActiveService(service.id)"
+        />
+      </div>
+      <div v-else class="services-empty" key="services-empty">
+        <img
+          src="@/assets/images/empty-image.png"
+          alt="Нет услуг"
+          class="services-empty-image"
+        />
+        <h2 class="services-empty-title">
+          Нет услуг.
+          <span
+            class="services-empty-link"
+            @click="isAddServiceBlockOpen = true"
+            >Нажмите,</span
+          >
+          чтобы добавить услугу
+        </h2>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -411,5 +415,16 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style lang="scss">
+.empty-fade-enter-active,
+.empty-fade-leave-active {
+  transition: opacity 0.15s;
+}
+.empty-fade-enter,
+.empty-fade-leave-to {
+  opacity: 0;
 }
 </style>

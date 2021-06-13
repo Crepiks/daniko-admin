@@ -67,7 +67,11 @@ export default {
 
         AuthRequests.login(payload)
           .then((res) => {
-            this.$store.commit("login", res.data.auth.token);
+            const data = {
+              token: res.data.auth.token,
+              email: res.data.admin.email,
+            };
+            this.$store.commit("login", data);
           })
           .catch((err) => {
             if (err.response.status == 401) {
