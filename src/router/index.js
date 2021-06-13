@@ -6,6 +6,7 @@ import MainLayout from "@/components/layouts/main";
 import Workers from "@/views/workers";
 import Services from "@/views/services";
 import Contacts from "@/views/contacts";
+import Photos from "@/views/photos";
 import Login from "@/views/login";
 
 Vue.use(VueRouter);
@@ -32,6 +33,11 @@ const routes = [
         path: "/contacts",
         name: "contacts",
         component: Contacts,
+      },
+      {
+        path: "/gallery",
+        name: "photos",
+        component: Photos,
       },
     ],
   },

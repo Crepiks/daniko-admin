@@ -39,7 +39,11 @@
       <div class="preview" v-for="(file, index) in filesPreviews" :key="index">
         <div
           class="preview-image"
-          :style="{ backgroundImage: `url(${baseUrl + file.path})` }"
+          :style="{
+            backgroundImage: `url(${
+              baseUrl + (file.path ? file.path : file.image.path)
+            })`,
+          }"
         ></div>
         <div class="preview-icon">
           <transition name="loading-fade" mode="out-in">

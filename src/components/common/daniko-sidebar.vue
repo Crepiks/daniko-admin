@@ -21,6 +21,10 @@
           <i class="bx bxs-phone sidebar-link-icon"></i>
           <span class="sidebar-link-label">Контакты</span>
         </router-link>
+        <router-link class="sidebar-link" to="/gallery">
+          <i class="bx bxs-photo-album sidebar-link-icon"></i>
+          <span class="sidebar-link-label">Галерея</span>
+        </router-link>
       </div>
     </div>
     <div class="sidebar-links">
