@@ -102,7 +102,6 @@ export default {
 
   mounted() {
     this.getAllPhotos();
-    console.log(this.activeImage);
   },
 
   methods: {
@@ -171,7 +170,43 @@ export default {
         });
     },
 
-    handleDeleteFile() {},
+    handleDeleteFile(imageId) {
+      this.deletingFileIds.push(imageId);
+
+      PhotosRequests.deleteImage(imageId)
+        .then(() => {
+          this.notificationHeading = "Изображение удалено";
+          this.notificationText =
+            "Чтобы добавить новые изображения, нажмите на синее поле";
+          this.notificationStatus = "success";
+          this.isNotificationOpen = true;
+
+          PhotosRequests.findAll() // вручную получаю все фото из галереи. Не использую метол getAllPhotos, потому что я не могу воспроизводить загрузку
+            .then((res) => {
+              this.photos = res.photos;
+
+              this.activeImage = this.photos[0];
+            })
+            .catch(() => {
+              this.notificationHeading = "Ошибка загрузки изображений";
+              this.notificationText =
+                "Проверьте подключение к интернету и обновите страницу";
+              this.notificationStatus = "error";
+              this.isNotificationOpen = true;
+            });
+        })
+        .catch(() => {
+          this.notificationHeading = "Произошла ошибка";
+          this.notificationText =
+            "Проверьте подключение к интернету и обновите страницу";
+          this.notificationStatus = "error";
+          this.isNotificationOpen = true;
+        })
+        .finally(() => {
+          const index = this.deletingFileIds.indexOf(imageId);
+          this.deletingFileIds.splice(index, 1);
+        });
+    },
   },
 };
 </script>
@@ -293,7 +328,7 @@ export default {
 <style lang="scss">
 .empty-fade-enter-active,
 .empty-fade-leave-active {
-  transition: opacity 0.2s;
+  transition: opacity 0.15s;
 }
 .empty-fade-enter,
 .empty-fade-leave-to {
