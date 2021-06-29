@@ -10,6 +10,8 @@ export default {
     login(state, { token, email }) {
       localStorage.setItem("authToken", token);
       localStorage.setItem("userEmail", email);
+      state.authToken = token;
+      state.userEmail = email;
       state.isLoggedIn = true;
       router.push("/workers");
     },
