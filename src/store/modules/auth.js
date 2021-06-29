@@ -5,13 +5,16 @@ export default {
     isLoggedIn: Boolean(localStorage.getItem("authToken")) || false,
     authToken: localStorage.getItem("authToken"),
     userEmail: localStorage.getItem("userEmail"),
+    userId: localStorage.getItem("userId"),
   },
   mutations: {
-    login(state, { token, email }) {
+    login(state, { token, email, id }) {
       localStorage.setItem("authToken", token);
       localStorage.setItem("userEmail", email);
+      localStorage.setItem("userId", id);
       state.authToken = token;
       state.userEmail = email;
+      state.userId = id;
       state.isLoggedIn = true;
       router.push("/workers");
     },

@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "@/store/index";
 
+import SplashScreen from "@/views/splash-screen.vue";
+
 import MainLayout from "@/components/layouts/main";
 import Workers from "@/views/workers";
 import Services from "@/views/services";
@@ -12,6 +14,10 @@ import Login from "@/views/login";
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/",
+    component: SplashScreen,
+  },
   {
     path: "/",
     component: MainLayout,

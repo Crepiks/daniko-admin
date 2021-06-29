@@ -70,6 +70,7 @@ export default {
             const data = {
               token: res.data.auth.token,
               email: res.data.admin.email,
+              id: res.data.admin.id,
             };
             this.$store.commit("login", data);
           })
