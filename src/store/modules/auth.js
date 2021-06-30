@@ -21,6 +21,7 @@ export default {
     logout(state) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("userId");
       state.isLoggedIn = false;
       router.push("/login");
     },

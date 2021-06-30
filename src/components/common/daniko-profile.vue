@@ -27,7 +27,10 @@
           placeholder="Введите новую электронную почту"
           v-model="newEmail"
         />
-        <daniko-button class="right-block-button" @click="handleChangingEmail"
+        <daniko-button
+          class="right-block-button"
+          :isLoading="isEmailLoading"
+          @click="handleChangingEmail"
           >Сменить почту</daniko-button
         >
         <daniko-input
@@ -46,6 +49,7 @@
         />
         <daniko-button
           class="right-block-button"
+          :isLoading="isPasswordLoading"
           @click="handleChangingPassword"
           >Сменить пароль</daniko-button
         >
@@ -59,7 +63,8 @@ import danikoButton from "@/components/common/daniko-button.vue";
 import danikoInput from "@/components/common/daniko-input.vue";
 import danikoRightBlock from "@/components/common/daniko-right-block.vue";
 import danikoNotification from "@/components/common/daniko-notification.vue";
-import { mapGetters } from "vuex";
+import AdminsRequests from "@/requests/admins";
+import AuthRequests from "@/requests/auth";
 
 export default {
   props: {
@@ -86,27 +91,55 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
+      isEmailLoading: false,
+      isPasswordLoading: false,
     };
+  },
+
+  watch: {
+    isOpen() {
+      if (this.isOpen) {
+        this.email = "";
+        this.newEmail = "";
+        this.password = "";
+        this.newPassword = "";
+      }
+    },
   },
 
   methods: {
     handleChangingEmail() {
       if (this.email.trim() && this.newEmail.trim()) {
-        if (this.email.trim() == mapGetters("userEmail")) {
-          // запрос
+        if (this.email.trim() == localStorage.getItem("userEmail")) {
+          this.isEmailLoading = true;
+          const payload = {
+            email: this.newEmail.trim(),
+          };
+          AdminsRequests.update(localStorage.getItem("userId"), payload)
+            .then(() => {
+              localStorage.setItem("userEmail", this.newEmail.trim());
+              this.$emit("close-profile");
+              this.notificationHeading = "Почта обновлена";
+              this.notificationText =
+                "Используйте новую почту для входа в админ панель";
+              this.notificationStatus = "success";
+              this.isNotificationOpen = true;
+            })
+            .catch(() => {
+              this.notificationHeading = "Произошла ошибка";
+              this.notificationText =
+                "Проверьте подключение к интернету и попробуйте заново";
+              this.notificationStatus = "error";
+              this.isNotificationOpen = true;
+            })
+            .finally(() => (this.isEmailLoading = false));
         } else {
-          this.notificationHeading = "Неверная текущая электронаая почта";
+          this.notificationHeading = "Неверная текущая электронная почта";
           this.notificationText =
-            "Для обновления почты нужно ввести текущую почту аккаунта. Попробуй снова";
+            "Для обновления почты нужно ввести текущую почту аккаунта. Попробуйте снова";
           this.notificationStatus = "error";
           this.isNotificationOpen = true;
         }
-        this.$emit("close-profile");
-        this.notificationHeading = "Почта обновлена";
-        this.notificationText =
-          "Используйте новую почту для входа в админ панель";
-        this.notificationStatus = "success";
-        this.isNotificationOpen = true;
       } else {
         this.notificationHeading = "Заполните все поля";
         this.notificationText =
@@ -118,12 +151,52 @@ export default {
 
     handleChangingPassword() {
       if (this.password.trim() && this.newPassword.trim()) {
-        this.$emit("close-profile");
-        this.notificationHeading = "Пароль обновлен";
-        this.notificationText =
-          "Используйте новый пароль для входа в админ панель";
-        this.notificationStatus = "success";
-        this.isNotificationOpen = true;
+        this.isPasswordLoading = true;
+
+        const authPayload = {
+          email: localStorage.getItem("userEmail"),
+          password: this.password.trim(),
+        };
+
+        AuthRequests.login(authPayload)
+          .then(() => {
+            const adminPayload = {
+              password: this.newPassword.trim(),
+            };
+
+            AdminsRequests.update(localStorage.getItem("userId"), adminPayload)
+              .then(() => {
+                this.$emit("close-profile");
+                this.notificationHeading = "Пароль обновлен";
+                this.notificationText =
+                  "Используйте новый пароль для входа в админ панель";
+                this.notificationStatus = "success";
+                this.isNotificationOpen = true;
+              })
+              .catch(() => {
+                this.notificationHeading = "Произошла ошибка";
+                this.notificationText =
+                  "Проверьте подключение к интернету и попробуйте заново";
+                this.notificationStatus = "error";
+                this.isNotificationOpen = true;
+              });
+          })
+          .catch((err) => {
+            if (err.response.status == 401) {
+              this.notificationHeading = "Неверный текущий пароль";
+              this.notificationText =
+                "Для обновления пароля нужно ввести текущий пароль аккаунта. Попробуйте снова";
+              this.notificationStatus = "error";
+              this.isNotificationOpen = true;
+            } else {
+              this.notificationHeading = "Произошла ошибка";
+              this.notificationText =
+                "Проверьте подключение к интернету и попробуйте заново";
+              this.notificationStatus = "error";
+              this.isNotificationOpen = true;
+            }
+          })
+          .finally(() => (this.isPasswordLoading = false));
       } else {
         this.notificationHeading = "Заполните все поля";
         this.notificationText = "Заполните поля текущего и нового пароля";
