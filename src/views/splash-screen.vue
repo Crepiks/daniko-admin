@@ -35,25 +35,27 @@ export default {
   }),
 
   mounted() {
-    if (localStorage.getItem("userId")) {
-      AdminsRequests.findOne(localStorage.getItem("userId"))
-        .then(() => {
-          this.$router.push("/workers");
-        })
-        .catch((err) => {
-          if (err.response.status == 403) {
-            this.logout();
-            this.$router.push("/login");
-          } else {
-            this.notificationHeading = "Ошибка. Что-то пошло не так";
-            this.notificationText =
-              "Проверьте подключение к интернету и попробуйте перезагрузить страницу";
-            this.isNotificationActive = true;
-          }
-        });
-    } else {
-      this.$router.push("/login");
-    }
+    setTimeout(() => {
+      if (localStorage.getItem("userId")) {
+        AdminsRequests.findOne(localStorage.getItem("userId"))
+          .then(() => {
+            this.$router.push("/workers");
+          })
+          .catch((err) => {
+            if (err.response.status == 403) {
+              this.logout();
+              this.$router.push("/login");
+            } else {
+              this.notificationHeading = "Ошибка. Что-то пошло не так";
+              this.notificationText =
+                "Проверьте подключение к интернету и попробуйте перезагрузить страницу";
+              this.isNotificationActive = true;
+            }
+          });
+      } else {
+        this.$router.push("/login");
+      }
+    }, 10);
   },
 
   methods: mapMutations(["logout"]),
