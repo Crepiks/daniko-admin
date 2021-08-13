@@ -84,7 +84,9 @@
       <div class="contacts-container">
         <div class="contact">
           <span class="contact-label">Номер телефона:</span>
-          <span class="contact-data">{{ contacts.phone || "-" }}</span>
+          <span class="contact-data">{{
+            contacts.phone ? contacts.phone : "-"
+          }}</span>
         </div>
         <div class="contact">
           <span class="contact-label">Электронная почта:</span>
@@ -141,7 +143,14 @@ export default {
       notificationHeading: "",
       notificationText: "",
       notificationStatus: "error",
-      contacts: {},
+      contacts: {
+        phone: "",
+        email: "",
+        address: "",
+        postIndex: "",
+        lat: 0,
+        lon: 0,
+      },
       isRightBlockOpen: false,
       newContacts: {
         phone: "",
@@ -163,7 +172,9 @@ export default {
   watch: {
     isRightBlockOpen() {
       if (this.isRightBlockOpen) {
-        this.newContacts.phone = this.contacts.phone;
+        this.contacts.phone
+          ? (this.newContacts.phone = this.contacts.phone)
+          : "";
         this.newContacts.email = this.contacts.email;
         this.newContacts.address = this.contacts.address;
         this.newContacts.postIndex = this.contacts.postIndex;
@@ -176,7 +187,12 @@ export default {
   methods: {
     getContacts() {
       ContactsRequests.findAll().then((res) => {
-        this.contacts = res.contacts;
+        if (res.contacts.phone) this.contacts.phone = res.contacts.phone;
+        if (res.contacts.email) this.contacts.email = res.contacts.email;
+        if (res.contacts.address) this.contacts.address = res.contacts.address;
+        if (res.contacts.postIndex)
+          this.contacts.postIndex = res.contacts.postIndex;
+        if (res.contacts.coords) this.contacts.coords = res.contacts.coords;
       });
     },
 
