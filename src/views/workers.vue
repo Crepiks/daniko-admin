@@ -113,6 +113,14 @@ export default {
     });
   },
 
+  watch: {
+    isAddWorkerBlockOpen() {
+      if (this.isAddWorkerBlockOpen) {
+        this.activeWorker = {};
+      }
+    },
+  },
+
   methods: {
     getAllWorkers() {
       WorkersRequests.findAll().then((res) => {
