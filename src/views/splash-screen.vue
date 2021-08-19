@@ -42,7 +42,7 @@ export default {
             this.$router.push("/workers");
           })
           .catch((err) => {
-            if (err.response.status == 401 && err.response.status == 403) {
+            if (err.response.status == 401 || err.response.status == 403) {
               this.logout();
               this.$router.push("/login");
             } else {
