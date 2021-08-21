@@ -42,7 +42,7 @@
       <daniko-price-field
         @change-free-status="
           !isServiceFree
-            ? ((isServiceFree = true), (newService.price = null))
+            ? ((isServiceFree = true), (newService.price = 0))
             : (isServiceFree = false)
         "
         :isServiceFree="isServiceFree"
@@ -173,6 +173,12 @@ export default {
     service() {
       if (this.service.title) {
         this.newService = this.service;
+      }
+
+      if (this.newService.price == 0) {
+        this.isServiceFree = true;
+      } else {
+        this.isServiceFree = false;
       }
     },
 
