@@ -153,6 +153,7 @@ export default {
           parsedService.images = service.images;
           parsedService.description = service.description;
           parsedService.schedule = service.schedule;
+          parsedService.price = service.price;
           parsedService.providedWorkers = service.workers;
           parsedService.id = service.id;
           this.activeService = parsedService;

@@ -39,6 +39,15 @@
         :scheduleDefault="newService.schedule"
         @edit-schedule="handleScheduleEdit"
       />
+      <daniko-price-field
+        @change-free-status="
+          !isServiceFree
+            ? ((isServiceFree = true), (newService.price = null))
+            : (isServiceFree = false)
+        "
+        :isServiceFree="isServiceFree"
+        v-model="newService.price"
+      />
       <daniko-choose-provided
         class="right-block-provided"
         title="Предоставляющие услугу врачи"
@@ -75,6 +84,7 @@ import danikoInput from "@/components/common/daniko-input.vue";
 import danikoMultipleFileInput from "@/components/common/daniko-multiple-file-input.vue";
 import danikoTextarea from "@/components/common/daniko-textarea.vue";
 import danikoAddSchedule from "@/components/common/daniko-add-schedule.vue";
+import danikoPriceField from "@/components/services/daniko-price-field.vue";
 import danikoChooseProvided from "@/components/common/daniko-choose-provided.vue";
 import danikoNotification from "@/components/common/daniko-notification.vue";
 
@@ -118,6 +128,7 @@ export default {
     "daniko-multiple-file-input": danikoMultipleFileInput,
     "daniko-textarea": danikoTextarea,
     "daniko-add-schedule": danikoAddSchedule,
+    "daniko-price-field": danikoPriceField,
     "daniko-choose-provided": danikoChooseProvided,
     "daniko-notification": danikoNotification,
   },
@@ -142,6 +153,7 @@ export default {
           saturday: "",
           sunday: "",
         },
+        price: null,
         providedWorkers: [{ id: 0, name: "" }],
       },
       scheduleDays: [
@@ -153,6 +165,7 @@ export default {
         "saturday",
         "sunday",
       ],
+      isServiceFree: false,
     };
   },
 
@@ -189,6 +202,7 @@ export default {
               saturday: "",
               sunday: "",
             },
+            price: null,
             providedWorkers: [],
           };
         }
@@ -216,58 +230,72 @@ export default {
       // сначала проходит валидация на обязательные поля, потом на формат времени приёма
       this.isNotificationOpen = false;
       if (this.newService.title.trim()) {
-        let isScheduleTimeFormatCorrect = true;
-        this.scheduleDays.forEach((day) => {
-          if (this.newService.schedule[day]) {
-            if (
-              Number(this.newService.schedule[day].substring(0, 2)) > 23 ||
-              Number(this.newService.schedule[day].substring(3, 5)) > 59 ||
-              Number(this.newService.schedule[day].substring(6, 8)) > 23 ||
-              Number(this.newService.schedule[day].substring(9, 11)) > 59
-            ) {
-              isScheduleTimeFormatCorrect = false;
-            }
-          }
-        });
-
-        if (isScheduleTimeFormatCorrect) {
-          let isScheduleTimeCorrect = true;
+        if (
+          this.isServiceFree ||
+          (Number(this.newService.price) && Number(this.newService.price) > 0)
+        ) {
+          let isScheduleTimeFormatCorrect = true;
           this.scheduleDays.forEach((day) => {
             if (this.newService.schedule[day]) {
               if (
-                Number(this.newService.schedule[day].substring(0, 2)) >
-                  Number(this.newService.schedule[day].substring(6, 8)) ||
-                (Number(this.newService.schedule[day].substring(0, 2)) ==
-                  Number(this.newService.schedule[day].substring(6, 8)) &&
-                  Number(this.newService.schedule[day].substring(3, 5)) >=
-                    Number(this.newService.schedule[day].substring(9, 11)))
+                Number(this.newService.schedule[day].substring(0, 2)) > 23 ||
+                Number(this.newService.schedule[day].substring(3, 5)) > 59 ||
+                Number(this.newService.schedule[day].substring(6, 8)) > 23 ||
+                Number(this.newService.schedule[day].substring(9, 11)) > 59
               ) {
-                isScheduleTimeCorrect = false;
+                isScheduleTimeFormatCorrect = false;
               }
             }
           });
 
-          if (isScheduleTimeCorrect) {
-            this.newService.workersIds = [];
-
-            this.newService.providedWorkers.forEach((worker) => {
-              this.newService.workersIds.push(worker.id);
+          if (isScheduleTimeFormatCorrect) {
+            let isScheduleTimeCorrect = true;
+            this.scheduleDays.forEach((day) => {
+              if (this.newService.schedule[day]) {
+                if (
+                  Number(this.newService.schedule[day].substring(0, 2)) >
+                    Number(this.newService.schedule[day].substring(6, 8)) ||
+                  (Number(this.newService.schedule[day].substring(0, 2)) ==
+                    Number(this.newService.schedule[day].substring(6, 8)) &&
+                    Number(this.newService.schedule[day].substring(3, 5)) >=
+                      Number(this.newService.schedule[day].substring(9, 11)))
+                ) {
+                  isScheduleTimeCorrect = false;
+                }
+              }
             });
 
-            this.editMode
-              ? this.$emit("edit-service", this.newService.id, this.newService)
-              : this.$emit("create-service", this.newService);
+            if (isScheduleTimeCorrect) {
+              this.newService.workersIds = [];
+
+              this.newService.providedWorkers.forEach((worker) => {
+                this.newService.workersIds.push(worker.id);
+              });
+
+              this.editMode
+                ? this.$emit(
+                    "edit-service",
+                    this.newService.id,
+                    this.newService
+                  )
+                : this.$emit("create-service", this.newService);
+            } else {
+              this.notificationHeading = "Неверно выставлено время приёма";
+              this.notificationText =
+                "Время окончания приёма не может быть раньше или равно времени начала приёма";
+              this.isNotificationOpen = true;
+            }
           } else {
-            this.notificationHeading = "Неверно выставлено время приёма";
+            // проверку валидации пришлось делать через отдельную переменну. isScheduleTimeFormatCorrect, потому что иначе notification мог разом вызваться много раз
+            this.notificationHeading = "Неверный формат времени приёма";
             this.notificationText =
-              "Время окончания приёма не может быть раньше или равно времени начала приёма";
+              "В поля времени приёма специалиста вводите от 00 до 24 для часов и от 00 до 59 для минут ";
             this.isNotificationOpen = true;
           }
         } else {
-          // проверку валидации пришлось делать через отдельную переменну. isScheduleTimeFormatCorrect, потому что иначе notification мог разом вызваться много раз
-          this.notificationHeading = "Неверный формат времени приёма";
+          this.notificationHeading = "Укажите стоимость услуги";
           this.notificationText =
-            "В поля времени приёма специалиста вводите от 00 до 24 для часов и от 00 до 59 для минут ";
+            'Укажите стоимость или нажмите "Бесплатная услуга", чтобы сделать её бесплатной ';
           this.isNotificationOpen = true;
         }
       } else {
